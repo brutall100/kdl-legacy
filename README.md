@@ -171,6 +171,17 @@ docker compose up -d --build
 
 Duomenys saugomi Docker tome `kdlegacy-data` (`/data` konteineryje).
 
+### Bandymui: Render.com (nemokamai)
+
+Saugykloje yra paruoštas [`render.yaml`](render.yaml).
+
+1. Užsiregistruokite <https://render.com> (galima prisijungti per GitHub).
+2. **New → Blueprint** → pasirinkite saugyklą `kdl-legacy` (jei nematote – „Configure GitHub“ ir suteikite prieigą).
+3. Įveskite `ADMIN_PASSWORD` (bent 10 simbolių) → **Apply**.
+4. Po ~3–5 min. svetainė veiks adresu `https://kdlegacy-xxxx.onrender.com`, admin – `/admin`.
+
+Nemokamo plano apribojimai: po 15 min. neveiklumo svetainė „užmiega“ (pirmas atidarymas ~30–60 s), o įkeltos nuotraukos ir pakeitimai **dingsta po perkrovimo** – tinka tik pasižiūrėti.
+
 ### C. Debesų platformos (Railway, Render, Fly.io)
 
 1. Sukurkite naują projektą iš šios GitHub saugyklos (naudojamas `Dockerfile` arba `npm start`).

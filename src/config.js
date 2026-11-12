@@ -45,7 +45,7 @@ module.exports = {
   UPLOAD_DIR,
   PORT: Number(process.env.PORT) || 3000,
   HOST: process.env.HOST || '0.0.0.0',
-  SITE_URL: (process.env.SITE_URL || '').replace(/\/+$/, ''),
+  SITE_URL: (process.env.SITE_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, ''),
   SESSION_SECRET: sessionSecret(),
   TRUST_PROXY: trustProxy(),
   IS_PROD: process.env.NODE_ENV === 'production',

@@ -1,0 +1,27 @@
+# Render.com „Blueprint“ – nemokamas bandomasis paleidimas.
+# Dėmesio: nemokamame plane nėra nuolatinio disko, todėl įkeltos nuotraukos
+# ir pakeitimai dingsta po kiekvieno perkrovimo / atnaujinimo. Tikrai svetainei
+# rinkitės mokamą planą su disku (žr. README).
+services:
+  - type: web
+    name: kdlegacy
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /robots.txt
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
