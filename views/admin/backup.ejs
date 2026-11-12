@@ -1,0 +1,17 @@
+<%- include('partials/top', { title: 'Atsarginė kopija' }) %>
+
+<section class="card form--narrow">
+  <h2 class="card__title">Atsisiųsti visą svetainės turinį</h2>
+  <p class="muted card__intro">Vienas ZIP failas su duomenų baze (naujienos, renginiai, tvarkaraštis, registracijos, nustatymai) ir visomis įkeltomis nuotraukomis. Rekomenduojame atsisiųsti kartą per mėnesį ir laikyti savo kompiuteryje ar debesyje.</p>
+
+  <dl class="facts">
+    <div><dt>Duomenų bazė</dt><dd><%= dbSize %></dd></div>
+    <div><dt>Nuotraukos ir video</dt><dd><%= uploadsFiles %> failai · <%= uploadsSize %></dd></div>
+    <div><dt>Iš viso (prieš suspaudimą)</dt><dd><%= totalSize %></dd></div>
+  </dl>
+
+  <p><a class="btn btn--primary" href="/admin/backup.zip" download><%- icon('download', 18) %> Atsisiųsti atsarginę kopiją (.zip)</a></p>
+  <p class="fld__help">Atkūrimui ZIP faile yra instrukcija (SKAITYK.txt). Jei prireiktų – kreipkitės į svetainės kūrėją.</p>
+</section>
+
+<%- include('partials/bottom') %>

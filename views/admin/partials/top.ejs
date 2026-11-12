@@ -31,6 +31,7 @@
 
       <p class="side__group">Svetainė</p>
       <a class="side__link<%= active === 'settings' ? ' is-active' : '' %>" href="/admin/settings"><%- icon('settings') %><span>Nustatymai</span></a>
+      <a class="side__link<%= active === 'backup' ? ' is-active' : '' %>" href="/admin/backup"><%- icon('download') %><span>Atsarginė kopija</span></a>
       <a class="side__link<%= active === 'account' ? ' is-active' : '' %>" href="/admin/account"><%- icon('lock') %><span>Slaptažodis</span></a>
     </nav>
     <div class="side__foot">

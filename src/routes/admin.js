@@ -1,6 +1,9 @@
 'use strict';
 
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+const archiver = require('archiver');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
@@ -631,6 +634,74 @@ router.post('/settings', upload(up.settingsUpload), async (req, res, next) => {
 /* ------------------------------------------------------------------ */
 /* Paskyra                                                             */
 /* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/* Atsarginė kopija                                                    */
+/* ------------------------------------------------------------------ */
+
+function dirSize(dir) {
+  let bytes = 0;
+  let files = 0;
+  for (const name of fs.readdirSync(dir)) {
+    const st = fs.statSync(path.join(dir, name));
+    if (st.isFile()) {
+      bytes += st.size;
+      files++;
+    }
+  }
+  return { bytes, files };
+}
+
+const fmtSize = (b) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
+
+router.get('/backup', (req, res) => {
+  const dbFile = path.join(config.DATA_DIR, 'kdlegacy.sqlite');
+  const up = dirSize(config.UPLOAD_DIR);
+  res.render('admin/backup', {
+    active: 'backup',
+    dbSize: fmtSize(fs.statSync(dbFile).size),
+    uploadsSize: fmtSize(up.bytes),
+    uploadsFiles: up.files,
+    totalSize: fmtSize(fs.statSync(dbFile).size + up.bytes),
+  });
+});
+
+router.get('/backup.zip', async (req, res, next) => {
+  const tmp = path.join(config.DATA_DIR, 'tmp', `backup-${crypto.randomBytes(6).toString('hex')}.sqlite`);
+  try {
+    await db.backup(tmp); // nuosekli duomenų bazės kopija net jei kas nors tuo metu rašo
+    const stamp = new Date().toISOString().slice(0, 16).replace(/[T:]/g, '-');
+    res.set('Content-Type', 'application/zip');
+    res.set('Content-Disposition', `attachment; filename="kdlegacy-kopija-${stamp}.zip"`);
+    const zip = archiver('zip', { zlib: { level: 6 } });
+    zip.on('error', (err) => {
+      console.error(err);
+      res.destroy(err);
+    });
+    res.on('close', () => fs.rm(tmp, { force: true }, () => {}));
+    zip.pipe(res);
+    zip.file(tmp, { name: 'kdlegacy.sqlite' });
+    zip.directory(config.UPLOAD_DIR, 'uploads');
+    zip.append(
+      [
+        'KD Legacy svetainės atsarginė kopija',
+        `Sukurta: ${new Date().toLocaleString('lt-LT', { timeZone: 'Europe/Vilnius' })}`,
+        '',
+        'kdlegacy.sqlite – duomenų bazė (naujienos, renginiai, tvarkaraštis, registracijos, nustatymai, prisijungimas)',
+        'uploads/        – įkeltos nuotraukos ir vaizdo įrašai',
+        '',
+        'Atkūrimas: sustabdykite svetainę, šiuos failus įkelkite į DATA_DIR katalogą',
+        '(pvz. /data) vietoje esamų ir vėl paleiskite svetainę. Daugiau – README faile.',
+        '',
+      ].join('\n'),
+      { name: 'SKAITYK.txt' }
+    );
+    await zip.finalize();
+  } catch (err) {
+    fs.rm(tmp, { force: true }, () => {});
+    next(err);
+  }
+});
 
 router.get('/account', (req, res) => {
   res.render('admin/account', { active: 'account', errors: [] });

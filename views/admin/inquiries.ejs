@@ -7,7 +7,7 @@
       <a class="tab<%= filter === k ? ' is-active' : '' %>" href="/admin/inquiries?status=<%= k %>"><%= label %></a>
     <% }) %>
   </nav>
-  <a class="btn btn--ghost" href="/admin/inquiries.csv"><%- icon('upload', 18) %> Atsisiųsti CSV (Excel)</a>
+  <a class="btn btn--ghost" href="/admin/inquiries.csv"><%- icon('download', 18) %> Atsisiųsti CSV (Excel)</a>
 </div>
 
 <% if (!rows.length) { %>

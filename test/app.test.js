@@ -218,3 +218,17 @@ test('įkeltų failų kataloge negalima išeiti už jo ribų', async () => {
   const res = await fetch(base + '/uploads/..%2F..%2Fkdlegacy.sqlite');
   assert.notEqual(res.status, 200);
 });
+
+test('admin: atsarginė kopija atsisiunčiama kaip ZIP', async () => {
+  const req = await login();
+  assert.equal((await req('/admin/backup')).status, 200);
+  const res = await req('/admin/backup.zip');
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('content-type'), 'application/zip');
+  const buf = Buffer.from(await res.arrayBuffer());
+  assert.equal(buf.subarray(0, 2).toString(), 'PK');
+  assert.ok(buf.includes(Buffer.from('kdlegacy.sqlite')));
+  assert.ok(buf.includes(Buffer.from('uploads/')));
+  const anon = await fetch(base + '/admin/backup.zip', { redirect: 'manual' });
+  assert.equal(anon.status, 302);
+});

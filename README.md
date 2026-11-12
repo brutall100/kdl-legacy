@@ -235,7 +235,9 @@ Visa svetainės informacija yra kataloge `DATA_DIR` (numatytasis `./data`):
 - `kdlegacy.sqlite` – naujienos, renginiai, tvarkaraštis, registracijos, nustatymai,
 - `uploads/` – įkeltos nuotraukos ir vaizdo įrašai.
 
-Pakanka reguliariai kopijuoti šį katalogą, pvz. kartą per parą:
+Paprasčiausia – admin panelėje **Atsarginė kopija → Atsisiųsti** (ZIP su duomenų baze ir nuotraukomis). Atkūrimas: sustabdyti svetainę, ZIP turinį įkelti į `DATA_DIR` ir paleisti iš naujo.
+
+Serveryje galima ir automatiškai – pakanka reguliariai kopijuoti šį katalogą, pvz. kartą per parą:
 
 ```bash
 # crontab -e

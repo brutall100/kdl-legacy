@@ -23,6 +23,7 @@ const paths = {
   up: '<path d="m6 14 6-6 6 6"/>',
   down: '<path d="m6 10 6 6 6-6"/>',
   grip: '<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>',
+  download: '<path d="M12 4.5v11M7.5 11 12 15.5l4.5-4.5"/><path d="M4.5 15.5v4h15v-4"/>',
   upload: '<path d="M12 16V5M7.5 9.5 12 5l4.5 4.5"/><path d="M4.5 15.5v4h15v-4"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
