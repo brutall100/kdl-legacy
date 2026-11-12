@@ -182,6 +182,28 @@ Saugykloje yra paruoštas [`render.yaml`](render.yaml).
 
 Nemokamo plano apribojimai: po 15 min. neveiklumo svetainė „užmiega“ (pirmas atidarymas ~30–60 s), o įkeltos nuotraukos ir pakeitimai **dingsta po perkrovimo** – tinka tik pasižiūrėti.
 
+### Tikra svetainė Render'e (mokamas planas su disku)
+
+Tą pačią bandomąją paslaugą galima paversti tikra svetaine – adresas ir nustatymai išlieka.
+Kadangi paslauga sukurta per Blueprint, keičiama **`render.yaml`** (kitaip kitas sinchronizavimas grąžintų nemokamą planą):
+
+```yaml
+    plan: starter            # vietoje free
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      - key: SITE_URL
+        value: https://www.kdlegacy.lt
+```
+
+Tada Render'e: **Settings → Custom Domains** → pridėkite domeną ir pas domeno registratorių nustatykite Render nurodytus DNS įrašus (HTTPS sertifikatas suteikiamas automatiškai).
+
+Svarbu: administratorius sukuriamas tik pirmą kartą (kai diske dar nėra duomenų bazės), vėliau slaptažodis keičiamas admin panelėje.
+
 ### C. Debesų platformos (Railway, Render, Fly.io)
 
 1. Sukurkite naują projektą iš šios GitHub saugyklos (naudojamas `Dockerfile` arba `npm start`).
