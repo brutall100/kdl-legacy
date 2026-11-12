@@ -52,6 +52,7 @@ const defaults = {
   city: 'Jonava',
   phone: '+370 673 24960',
   email: 'k.dulinskaite@gmail.com',
+  facebook: 'https://www.facebook.com/share/1EAW7RiHc2/',
   instagram: 'https://www.instagram.com/kdlegacystudija/',
   map_query: 'Turgaus g. 11, 55149 Jonava',
   seo_description_lt:

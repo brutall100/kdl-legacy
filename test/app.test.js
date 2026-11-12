@@ -84,6 +84,7 @@ test('viešieji puslapiai veikia LT ir EN kalbomis', async () => {
   assert.match(lt, /<html lang="lt">/);
   assert.match(lt, /id="kd-logo"/, 'logotipas įtrauktas');
   assert.match(lt, /Turgaus g\. 11/);
+  assert.match(lt, /facebook\.com\/share\/1EAW7RiHc2/);
   const en = await (await fetch(base + '/en')).text();
   assert.match(en, /<html lang="en">/);
   assert.match(en, /Book a trial class/);

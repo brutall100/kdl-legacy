@@ -259,9 +259,8 @@ test/                  automatiniai testai (npm test)
 
 ## Ką dar reikia sutvarkyti
 
-Kontaktai (adresas, telefonas, el. paštas, Instagram) jau įrašyti iš studijos Facebook puslapio. Liko:
+Kontaktai (adresas, telefonas, el. paštas, Facebook, Instagram) jau įrašyti iš studijos Facebook puslapio. Liko:
 
-- [ ] **Facebook nuoroda** – Nustatymai → Socialiniai tinklai (įklijuokite studijos Facebook puslapio adresą).
 - [ ] **Tikras tvarkaraštis, kainos ir treneriai** – dabar pavyzdiniai.
 - [ ] **Nuotraukos** – pakeiskite pavyzdines galerijos iliustracijas tikromis treniruočių / pasirodymų nuotraukomis; pridėkite trenerių ir stilių nuotraukas.
 - [ ] **Darbo laikas** – Nustatymai → Kontaktai.
