@@ -2535,6 +2535,10 @@ main {
 .site-footer__bottom a:hover {
   color: var(--pink);
 }
+.credit a {
+  color: var(--muted);
+  font-weight: 700;
+}
 @media (max-width: 800px) {
   .site-footer__grid {
     grid-template-columns: 1fr 1fr;
