@@ -1,0 +1,9 @@
+<%- include('partials/head') %>
+<section class="message">
+  <div class="container">
+    <p class="message__code"><%= heading %></p>
+    <p class="message__text"><%= text %></p>
+    <a class="btn btn--primary" href="<%= backUrl %>"><%= t('notFound.back') %> <%- icon('arrow', 18) %></a>
+  </div>
+</section>
+<%- include('partials/foot') %>

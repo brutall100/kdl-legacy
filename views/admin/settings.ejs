@@ -1,0 +1,30 @@
+<%- include('partials/top', { title: 'Nustatymai' }) %>
+
+<% if (errors.length) { %>
+<div class="alert alert--error" role="alert">
+  <strong>Nepavyko išsaugoti:</strong>
+  <ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul>
+</div>
+<% } %>
+
+<nav class="tabs tabs--anchor" aria-label="Skiltys">
+  <% groups.forEach((g) => { %><a class="tab" href="#<%= g.key %>"><%= g.title %></a><% }) %>
+</nav>
+
+<form method="post" action="/admin/settings?_csrf=<%= encodeURIComponent(csrf) %>" enctype="multipart/form-data" data-dirty>
+  <% groups.forEach((g) => { const fieldsFirstI18n = (g.fields.find((x) => x.i18n) || {}).name; %>
+  <section class="card form" id="<%= g.key %>">
+    <h2 class="card__title"><%= g.title %></h2>
+    <% if (g.intro) { %><p class="muted card__intro"><%= g.intro %></p><% } %>
+    <% g.fields.forEach((f) => { %>
+      <%- include('partials/field', { f, row, options, fieldsFirstI18n }) %>
+    <% }) %>
+  </section>
+  <% }) %>
+
+  <div class="save-bar">
+    <button class="btn btn--primary" type="submit"><%- icon('check', 18) %> Išsaugoti nustatymus</button>
+  </div>
+</form>
+
+<%- include('partials/bottom') %>

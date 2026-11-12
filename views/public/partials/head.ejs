@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="<%= lang %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= fullTitle %></title>
+  <meta name="description" content="<%= page.description %>">
+  <link rel="canonical" href="<%= canonical %>">
+  <link rel="alternate" hreflang="<%= lang %>" href="<%= canonical %>">
+  <link rel="alternate" hreflang="<%= other %>" href="<%= root + altUrl %>">
+  <link rel="alternate" hreflang="x-default" href="<%= lang === 'lt' ? canonical : root + altUrl %>">
+  <meta property="og:type" content="<%= page.type || 'website' %>">
+  <meta property="og:site_name" content="<%= siteName %>">
+  <meta property="og:title" content="<%= fullTitle %>">
+  <meta property="og:description" content="<%= page.description %>">
+  <meta property="og:url" content="<%= canonical %>">
+  <meta property="og:locale" content="<%= lang === 'lt' ? 'lt_LT' : 'en_GB' %>">
+  <meta property="og:image" content="<%= root + (page.image ? img(page.image) : '/img/og-image.jpg') %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#07060a">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preload" href="/fonts/unbounded-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="<%= asset('/css/site.css') %>">
+  <script src="<%= asset('/js/boot.js') %>"></script>
+</head>
+<body class="<%= isHome ? 'is-home' : 'is-sub' %>">
+<%- include('../../partials/logo-sprite') %>
+<a class="skip-link" href="#main"><%= t('skip') %></a>
+<canvas class="bg-fx" id="bg-fx" aria-hidden="true"></canvas>
+
+<% if (s.demo_content === '1') { %>
+<div class="demo-bar" role="note"><%= t('demo.banner') %></div>
+<% } %>
+
+<%
+  const home = paths.home;
+  const anchor = (id) => (isHome ? '#' + id : home + '#' + id);
+  const nav = [
+    { href: anchor('apie'), label: t('nav.about') },
+    has.classes && { href: anchor('stiliai'), label: t('nav.classes') },
+    has.schedule && { href: anchor('tvarkarastis'), label: t('nav.schedule') },
+    has.trainers && { href: anchor('treneriai'), label: t('nav.trainers') },
+    has.prices && { href: anchor('kainos'), label: t('nav.prices') },
+    { href: paths.news, label: t('nav.news'), key: 'news' },
+    { href: paths.events, label: t('nav.events'), key: 'events' },
+    has.gallery && { href: paths.gallery, label: t('nav.gallery'), key: 'gallery' },
+    { href: anchor('kontaktai'), label: t('nav.contacts') },
+  ].filter(Boolean);
+%>
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="logo" href="<%= home %>" aria-label="<%= siteName %> – <%= t('nav.home') %>">
+      <% if (s.logo) { %>
+        <img class="logo__img" src="<%= img(s.logo) %>" alt="<%= siteName %>" height="52">
+      <% } else { %>
+        <%- logoSvg('logo__svg') %>
+      <% } %>
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label="<%= t('nav.menu') %>">
+      <ul class="nav__list">
+        <% nav.forEach((item) => { %>
+          <li><a class="nav__link<%= item.key && item.key === page.section ? ' is-current' : '' %>" href="<%= item.href %>"><%= item.label %></a></li>
+        <% }) %>
+      </ul>
+      <div class="nav__extra">
+        <a class="btn btn--primary btn--sm" href="<%= anchor('registracija') %>"><%= t('nav.register') %></a>
+      </div>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="lang" href="<%= altUrl %>" hreflang="<%= other %>" lang="<%= other %>" aria-label="<%= t('lang.switch') %>">
+        <span class="lang__on"><%= t('lang.current') %></span><span class="lang__off"><%= t('lang.switchShort') %></span>
+      </a>
+      <a class="btn btn--primary btn--sm site-header__cta" href="<%= anchor('registracija') %>"><%= t('nav.register') %></a>
+      <button class="burger" type="button" aria-controls="site-nav" aria-expanded="false" data-burger>
+        <span class="burger__lines" aria-hidden="true"></span>
+        <span class="sr-only"><%= t('nav.menu') %></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">

@@ -1,0 +1,101 @@
+<%- include('partials/top', { title: resource.label }) %>
+<%
+  const base = '/admin/r/' + resource.key;
+  const cell = (row, col) => {
+    const v = row[col.field];
+    if (col.type === 'date') return fmtDate(v);
+    if (col.type === 'weekday') return weekdayName(v);
+    return v == null ? '' : String(v);
+  };
+%>
+
+<div class="page-bar">
+  <p class="muted"><%= resource.intro %></p>
+  <a class="btn btn--primary" href="<%= base %>/new"><%- icon('plus', 18) %> <%= resource.addLabel %></a>
+</div>
+
+<% if (resource.bulkUpload) { %>
+<form class="dropzone" method="post" action="<%= base %>/bulk?_csrf=<%= encodeURIComponent(csrf) %>" enctype="multipart/form-data" data-dropzone>
+  <%- icon('upload', 34) %>
+  <p class="dropzone__title">Nutempkite nuotraukas čia</p>
+  <p class="muted">arba</p>
+  <label class="btn btn--ghost">
+    Pasirinkti nuotraukas
+    <input class="sr-only" type="file" name="files" multiple accept="image/jpeg,image/png,image/webp,image/gif" data-dropzone-input>
+  </label>
+  <button class="btn btn--primary" type="submit" data-dropzone-submit>Įkelti</button>
+  <p class="dropzone__status" data-dropzone-status role="status" aria-live="polite"></p>
+  <div class="progress" hidden data-dropzone-progress><span></span></div>
+</form>
+<% } %>
+
+<% if (!rows.length) { %>
+  <div class="card empty">
+    <%- icon(resource.icon, 40) %>
+    <p>Įrašų dar nėra.</p>
+    <a class="btn btn--primary" href="<%= base %>/new"><%- icon('plus', 18) %> <%= resource.addLabel %></a>
+  </div>
+
+<% } else if (resource.grid) { %>
+  <p class="hint"><%- icon('grip', 16) %> Tempkite nuotraukas, kad pakeistumėte jų eilės tvarką svetainėje.</p>
+  <ul class="tiles" data-sortable="<%= base %>/reorder">
+    <% rows.forEach((row) => { %>
+    <li class="tile" data-id="<%= row.id %>" draggable="true">
+      <a class="tile__img" href="<%= base %>/<%= row.id %>/edit" draggable="false"><img src="<%= thumb(row.image) %>" alt="<%= row.caption_lt || '' %>" loading="lazy" draggable="false"></a>
+      <% if (row.caption_lt) { %><p class="tile__caption"><%= row.caption_lt %></p><% } %>
+      <div class="tile__actions">
+        <form method="post" action="<%= base %>/<%= row.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="up"><button class="icon-btn" type="submit" title="Perkelti arčiau pradžios" aria-label="Perkelti arčiau pradžios"><%- icon('up', 18) %></button></form>
+        <form method="post" action="<%= base %>/<%= row.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="down"><button class="icon-btn" type="submit" title="Perkelti toliau" aria-label="Perkelti toliau"><%- icon('down', 18) %></button></form>
+        <a class="icon-btn" href="<%= base %>/<%= row.id %>/edit" title="Redaguoti aprašą" aria-label="Redaguoti"><%- icon('edit', 18) %></a>
+        <form method="post" action="<%= base %>/<%= row.id %>/delete" data-confirm="Ištrinti šią nuotrauką?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="icon-btn icon-btn--danger" type="submit" title="Ištrinti" aria-label="Ištrinti"><%- icon('trash', 18) %></button></form>
+      </div>
+    </li>
+    <% }) %>
+  </ul>
+
+<% } else { %>
+  <% if (resource.sortable) { %><p class="hint"><%- icon('grip', 16) %> Tempkite eilutes arba naudokite rodykles, kad pakeistumėte tvarką svetainėje.</p><% } %>
+  <div class="card card--flush">
+    <table class="table">
+      <thead>
+        <tr>
+          <% if (resource.sortable) { %><th class="table__grip"><span class="sr-only">Tvarka</span></th><% } %>
+          <% resource.list.forEach((col) => { %><th class="col-<%= col.type || 'text' %>"><%= col.label %></th><% }) %>
+          <th class="table__actions"><span class="sr-only">Veiksmai</span></th>
+        </tr>
+      </thead>
+      <tbody <%- resource.sortable ? 'data-sortable="' + base + '/reorder"' : '' %>>
+        <% rows.forEach((row) => { %>
+        <tr data-id="<%= row.id %>" <%- resource.sortable ? 'draggable="true"' : '' %>>
+          <% if (resource.sortable) { %><td class="table__grip" aria-hidden="true"><%- icon('grip', 18) %></td><% } %>
+          <% resource.list.forEach((col) => { %>
+            <td class="col-<%= col.type || 'text' %><%= col.main ? ' col-main' : '' %>" data-label="<%= col.label %>">
+              <% if (col.type === 'image') { %>
+                <% if (row[col.field]) { %><img class="table__thumb" src="<%= thumb(row[col.field]) %>" alt="" loading="lazy" draggable="false"><% } else { %><span class="table__thumb table__thumb--empty"><%- icon('image', 18) %></span><% } %>
+              <% } else if (col.type === 'bool') { %>
+                <span class="status status--<%= Number(row[col.field]) ? 'on' : 'off' %>"><%= Number(row[col.field]) ? 'Taip' : 'Ne' %></span>
+              <% } else if (col.main) { %>
+                <a href="<%= base %>/<%= row.id %>/edit" draggable="false"><%= cell(row, col) || '(be pavadinimo)' %></a>
+              <% } else { %>
+                <%= cell(row, col) %>
+              <% } %>
+            </td>
+          <% }) %>
+          <td class="table__actions">
+            <div class="row-actions">
+              <% if (resource.sortable) { %>
+              <form method="post" action="<%= base %>/<%= row.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="up"><button class="icon-btn" type="submit" title="Aukštyn" aria-label="Perkelti aukštyn"><%- icon('up', 18) %></button></form>
+              <form method="post" action="<%= base %>/<%= row.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="down"><button class="icon-btn" type="submit" title="Žemyn" aria-label="Perkelti žemyn"><%- icon('down', 18) %></button></form>
+              <% } %>
+              <a class="icon-btn" href="<%= base %>/<%= row.id %>/edit" title="Redaguoti" aria-label="Redaguoti"><%- icon('edit', 18) %></a>
+              <form method="post" action="<%= base %>/<%= row.id %>/delete" data-confirm="Ar tikrai ištrinti šį įrašą?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="icon-btn icon-btn--danger" type="submit" title="Ištrinti" aria-label="Ištrinti"><%- icon('trash', 18) %></button></form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('partials/bottom') %>

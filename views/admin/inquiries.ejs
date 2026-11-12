@@ -1,0 +1,58 @@
+<%- include('partials/top', { title: 'Registracijos' }) %>
+
+<div class="page-bar">
+  <nav class="tabs" aria-label="Filtras">
+    <a class="tab<%= !filter ? ' is-active' : '' %>" href="/admin/inquiries">Visos</a>
+    <% Object.entries(statusTabs).forEach(([k, label]) => { %>
+      <a class="tab<%= filter === k ? ' is-active' : '' %>" href="/admin/inquiries?status=<%= k %>"><%= label %></a>
+    <% }) %>
+  </nav>
+  <a class="btn btn--ghost" href="/admin/inquiries.csv"><%- icon('upload', 18) %> Atsisiųsti CSV (Excel)</a>
+</div>
+
+<% if (!rows.length) { %>
+  <div class="card empty">
+    <%- icon('inbox', 40) %>
+    <p>Registracijų nėra.</p>
+    <p class="muted">Kai lankytojas užpildys registracijos formą svetainėje, ji atsiras čia.</p>
+  </div>
+<% } else { %>
+  <ul class="inq-list">
+    <% rows.forEach((q) => { %>
+    <li class="card inq inq--<%= q.status %>">
+      <header class="inq__head">
+        <div>
+          <h2 class="inq__name"><%= q.name %></h2>
+          <p class="muted"><%= new Date(q.created_at).toLocaleString('lt-LT', { timeZone: 'Europe/Vilnius', dateStyle: 'medium', timeStyle: 'short' }) %> · <%= (q.lang || 'lt').toUpperCase() %></p>
+        </div>
+        <span class="status status--<%= q.status %>"><%= statuses[q.status] || q.status %></span>
+      </header>
+      <dl class="inq__facts">
+        <% if (q.phone) { %><div><dt>Telefonas</dt><dd><a href="tel:<%= q.phone.replace(/[^+\d]/g, '') %>"><%= q.phone %></a></dd></div><% } %>
+        <% if (q.email) { %><div><dt>El. paštas</dt><dd><a href="mailto:<%= q.email %>"><%= q.email %></a></dd></div><% } %>
+        <% if (q.age) { %><div><dt>Amžius</dt><dd><%= q.age %></dd></div><% } %>
+        <% if (q.class_name) { %><div><dt>Stilius</dt><dd><%= q.class_name %></dd></div><% } %>
+      </dl>
+      <% if (q.message) { %><p class="inq__msg"><%= q.message %></p><% } %>
+      <footer class="inq__foot">
+        <form method="post" action="/admin/inquiries/<%= q.id %>/status" class="inq__status">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <label for="st_<%= q.id %>" class="muted">Būsena</label>
+          <select class="input input--sm" id="st_<%= q.id %>" name="status" data-autosubmit>
+            <% Object.entries(statuses).forEach(([k, label]) => { %>
+              <option value="<%= k %>" <%= q.status === k ? 'selected' : '' %>><%= label %></option>
+            <% }) %>
+          </select>
+          <noscript><button class="btn btn--ghost btn--sm" type="submit">Keisti</button></noscript>
+        </form>
+        <form method="post" action="/admin/inquiries/<%= q.id %>/delete" data-confirm="Ištrinti šią registraciją?">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="icon-btn icon-btn--danger" type="submit" title="Ištrinti" aria-label="Ištrinti"><%- icon('trash', 18) %></button>
+        </form>
+      </footer>
+    </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('partials/bottom') %>

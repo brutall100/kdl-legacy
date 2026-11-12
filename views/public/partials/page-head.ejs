@@ -1,0 +1,9 @@
+<section class="page-head">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="<%= paths.home %>"><%= t('nav.home') %></a>
+      <% (locals.crumbs || []).forEach((c) => { %><span aria-hidden="true">/</span><a href="<%= c.href %>"><%= c.label %></a><% }) %>
+    </nav>
+    <h1 class="page-head__title"><%= heading %></h1>
+  </div>
+</section>

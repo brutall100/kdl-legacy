@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Prisijungimas · <%= s.site_name || 'KD Legacy' %></title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="<%= asset('/css/admin.css') %>">
+</head>
+<body class="auth">
+<%- include('../partials/logo-sprite') %>
+  <main class="auth__card">
+    <p class="auth__logo"><%- logoSvg('auth__logo-svg', s.site_name || 'KD Legacy') %></p>
+    <h1 class="auth__title">Valdymo panelė</h1>
+    <% if (error) { %><p class="alert alert--error" role="alert"><%= error %></p><% } %>
+    <form method="post" action="/admin/login" class="stack">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label class="fld__solo">
+        <span>Vartotojo vardas</span>
+        <input class="input" type="text" name="username" value="<%= username %>" required autocomplete="username" autocapitalize="none" autofocus>
+      </label>
+      <label class="fld__solo">
+        <span>Slaptažodis</span>
+        <input class="input" type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn--primary btn--block" type="submit">Prisijungti</button>
+    </form>
+    <p class="auth__back"><a href="/">← Grįžti į svetainę</a></p>
+  </main>
+</body>
+</html>

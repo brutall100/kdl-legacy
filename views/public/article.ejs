@@ -1,0 +1,57 @@
+<%- include('partials/head') %>
+<%
+  const isEvent = kind === 'events';
+  const listHref = isEvent ? paths.events : paths.news;
+  const listLabel = isEvent ? t('events.pageTitle') : t('news.pageTitle');
+  const body = isEvent ? L(item, 'description') : L(item, 'body');
+%>
+<article class="article">
+  <header class="page-head page-head--article">
+    <div class="container container--narrow">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="<%= paths.home %>"><%= t('nav.home') %></a><span aria-hidden="true">/</span><a href="<%= listHref %>"><%= listLabel %></a>
+      </nav>
+      <% if (!isEvent) { %><time class="article__date" datetime="<%= item.published_at %>"><%= fmtDate(item.published_at) %></time><% } %>
+      <h1 class="page-head__title page-head__title--article"><%= L(item, 'title') %></h1>
+      <% if (!isEvent && L(item, 'summary')) { %><p class="article__lead"><%= L(item, 'summary') %></p><% } %>
+
+      <% if (isEvent) { %>
+      <dl class="event-facts">
+        <div>
+          <dt><%- icon('calendar', 20) %> <%= t('events.when') %></dt>
+          <dd>
+            <time datetime="<%= item.date %>"><%= fmtDate(item.date) %></time><% if (item.end_date && item.end_date !== item.date) { %> – <time datetime="<%= item.end_date %>"><%= fmtDate(item.end_date) %></time><% } %><% if (item.time) { %>, <%= item.time %><% } %>
+          </dd>
+        </div>
+        <% if (L(item, 'location')) { %>
+        <div><dt><%- icon('pin', 20) %> <%= t('events.where') %></dt><dd><%= L(item, 'location') %></dd></div>
+        <% } %>
+      </dl>
+      <% } %>
+    </div>
+  </header>
+
+  <div class="container container--narrow article__body">
+    <% if (item.image) { %>
+      <a class="article__image" href="<%= img(item.image) %>" data-lb><img src="<%= img(item.image) %>" alt=""></a>
+    <% } %>
+    <div class="prose"><%- body %></div>
+    <% if (isEvent && item.link) { %>
+      <p><a class="btn btn--primary" href="<%= item.link %>" target="_blank" rel="noopener noreferrer"><%= t('events.link') %> <%- icon('external', 18) %></a></p>
+    <% } %>
+    <p class="article__back"><a class="link-arrow link-arrow--back" href="<%= listHref %>"><%- icon('arrow', 18) %> <%= isEvent ? t('events.all') : t('news.all') %></a></p>
+  </div>
+</article>
+
+<% if (others.length) { %>
+<section class="section section--tight">
+  <div class="container">
+    <header class="section__head"><h2 class="h3"><%= t('news.other') %></h2></header>
+    <div class="news__grid">
+      <% others.forEach((n) => { %><%- include('partials/news-card', { n }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/foot') %>

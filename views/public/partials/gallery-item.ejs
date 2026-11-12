@@ -1,0 +1,3 @@
+<a class="gallery-item" href="<%= img(g.image) %>" data-lb data-caption="<%= L(g, 'caption') %>" aria-label="<%= L(g, 'caption') || t('gallery.open') %>" data-reveal>
+  <img src="<%= thumb(g.image) %>" alt="<%= L(g, 'caption') %>" loading="lazy" decoding="async"<% if (g._w && g._h) { %> width="<%= g._w %>" height="<%= g._h %>"<% } %>>
+</a>

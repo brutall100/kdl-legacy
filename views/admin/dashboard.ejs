@@ -1,0 +1,64 @@
+<%- include('partials/top', { title: 'Skydelis' }) %>
+
+<% if (demo) { %>
+<section class="card card--notice">
+  <h2 class="card__title">Svetainėje dar rodomas pavyzdinis turinys</h2>
+  <p class="muted">Lankytojai viršuje mato juostą „Svetainė dar pildoma“. Sutvarkykite žemiau išvardytus dalykus ir paslėpkite juostą.</p>
+  <ul class="todo">
+    <% todo.forEach((x) => { %><li><a href="<%= x.href %>"><%- icon('arrow', 16) %> <%= x.text %></a></li><% }) %>
+  </ul>
+  <form method="post" action="/admin/demo-off" data-confirm="Paslėpti juostą „Svetainė dar pildoma“? Darykite tai tik sutvarkę pavyzdinį turinį.">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="btn btn--primary" type="submit"><%- icon('check', 18) %> Turinys sutvarkytas – paslėpti juostą</button>
+  </form>
+</section>
+<% } else if (todo.length) { %>
+<section class="card card--notice">
+  <h2 class="card__title">Dar verta sutvarkyti</h2>
+  <ul class="todo">
+    <% todo.forEach((x) => { %><li><a href="<%= x.href %>"><%- icon('arrow', 16) %> <%= x.text %></a></li><% }) %>
+  </ul>
+</section>
+<% } %>
+
+<section class="quick">
+  <a class="quick__item" href="/admin/r/news/new"><%- icon('news', 26) %><span>Nauja naujiena</span></a>
+  <a class="quick__item" href="/admin/r/events/new"><%- icon('calendar', 26) %><span>Naujas renginys</span></a>
+  <a class="quick__item" href="/admin/r/gallery"><%- icon('upload', 26) %><span>Įkelti nuotraukas</span></a>
+  <a class="quick__item" href="/admin/r/schedule"><%- icon('clock', 26) %><span>Keisti tvarkaraštį</span></a>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <header class="card__head">
+      <h2 class="card__title">Naujausios registracijos</h2>
+      <a class="link" href="/admin/inquiries">Visos →</a>
+    </header>
+    <% if (inquiries.length) { %>
+      <ul class="mini-list">
+        <% inquiries.forEach((q) => { %>
+        <li>
+          <div>
+            <strong><%= q.name %></strong>
+            <span class="muted"><%= [q.phone, q.class_name].filter(Boolean).join(' · ') %></span>
+          </div>
+          <span class="status status--<%= q.status %>"><%= statuses[q.status] || q.status %></span>
+        </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="muted">Registracijų dar nėra. Jos atsiras čia, kai lankytojai užpildys formą svetainėje.</p>
+    <% } %>
+  </section>
+
+  <section class="card">
+    <header class="card__head"><h2 class="card__title">Turinys</h2></header>
+    <ul class="count-list">
+      <% Object.values(resources).forEach((r) => { %>
+      <li><a href="/admin/r/<%= r.key %>"><%- icon(r.icon, 18) %><span><%= r.label %></span><b><%= counts[r.key] %></b></a></li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+
+<%- include('partials/bottom') %>

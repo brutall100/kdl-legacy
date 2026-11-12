@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="csrf" content="<%= csrf %>">
+  <title><%= title %> · <%= s.site_name || 'KD Legacy' %> valdymas</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="<%= asset('/css/admin.css') %>">
+</head>
+<body>
+<%- include('../../partials/logo-sprite') %>
+<div class="shell">
+  <aside class="side" id="side">
+    <a class="side__logo" href="/admin">
+      <%- logoSvg('side__logo-svg', s.site_name || 'KD Legacy') %>
+      <small>Valdymo panelė</small>
+    </a>
+    <nav class="side__nav" aria-label="Pagrindinis meniu">
+      <a class="side__link<%= active === 'dashboard' ? ' is-active' : '' %>" href="/admin"><%- icon('home') %><span>Skydelis</span></a>
+      <a class="side__link<%= active === 'inquiries' ? ' is-active' : '' %>" href="/admin/inquiries">
+        <%- icon('inbox') %><span>Registracijos</span>
+        <% if (newInquiries) { %><b class="pill"><%= newInquiries %></b><% } %>
+      </a>
+
+      <p class="side__group">Turinys</p>
+      <% Object.values(resources).forEach((r) => { %>
+        <a class="side__link<%= active === r.key ? ' is-active' : '' %>" href="/admin/r/<%= r.key %>"><%- icon(r.icon) %><span><%= r.label %></span></a>
+      <% }) %>
+
+      <p class="side__group">Svetainė</p>
+      <a class="side__link<%= active === 'settings' ? ' is-active' : '' %>" href="/admin/settings"><%- icon('settings') %><span>Nustatymai</span></a>
+      <a class="side__link<%= active === 'account' ? ' is-active' : '' %>" href="/admin/account"><%- icon('lock') %><span>Slaptažodis</span></a>
+    </nav>
+    <div class="side__foot">
+      <a class="side__link" href="/" target="_blank" rel="noopener"><%- icon('external') %><span>Peržiūrėti svetainę</span></a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="side__link" type="submit"><%- icon('logout') %><span>Atsijungti (<%= user.username %>)</span></button>
+      </form>
+    </div>
+  </aside>
+  <div class="side__backdrop" data-side-close></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn topbar__menu" type="button" data-side-toggle aria-controls="side" aria-expanded="false" aria-label="Meniu"><%- icon('menu', 22) %></button>
+      <h1 class="topbar__title"><%= title %></h1>
+    </header>
+
+    <% if (flash) { %>
+      <div class="flash flash--<%= flash.type %>" role="status" data-flash><%- icon(flash.type === 'ok' ? 'check' : 'help') %><span><%= flash.msg %></span></div>
+    <% } %>
+
+    <div class="content">

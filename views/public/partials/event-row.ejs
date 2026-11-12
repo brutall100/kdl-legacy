@@ -1,0 +1,17 @@
+<li class="event" data-reveal>
+  <a class="event__link" href="<%= paths.events %>/<%= slug(e) %>">
+    <time class="event__date" datetime="<%= e.date %>">
+      <span class="event__day"><%= fmtDate(e.date, 'day') %></span>
+      <span class="event__month"><%= fmtDate(e.date, 'month') %></span>
+    </time>
+    <div class="event__body">
+      <h3 class="event__title"><%= L(e, 'title') %></h3>
+      <p class="event__meta">
+        <% const em = [fmtDate(e.date, 'weekday'), e.time, L(e, 'location')].filter(Boolean); %>
+        <%= em.join(' · ') %>
+      </p>
+    </div>
+    <% if (e.image) { %><img class="event__thumb" src="<%= thumb(e.image) %>" alt="" loading="lazy" decoding="async"><% } %>
+    <span class="event__arrow" aria-hidden="true"><%- icon('arrow', 26) %></span>
+  </a>
+</li>

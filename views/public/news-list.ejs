@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<%- include('partials/page-head', { heading: t('news.pageTitle') }) %>
+
+<section class="section section--tight">
+  <div class="container">
+    <% if (items.length) { %>
+      <div class="news__grid">
+        <% items.forEach((n) => { %><%- include('partials/news-card', { n }) %><% }) %>
+      </div>
+      <% if (pages > 1) { %>
+      <nav class="pager" aria-label="Pagination">
+        <% for (let p = 1; p <= pages; p++) { %>
+          <a class="pager__link<%= p === current ? ' is-current' : '' %>" href="<%= paths.news %><%= p > 1 ? '?p=' + p : '' %>" <%= p === current ? 'aria-current="page"' : '' %>><%= p %></a>
+        <% } %>
+      </nav>
+      <% } %>
+    <% } else { %>
+      <p class="empty"><%= t('news.empty') %></p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

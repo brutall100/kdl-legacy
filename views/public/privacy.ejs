@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<%- include('partials/page-head', { heading: t('privacy.title') }) %>
+<% const contact = [s.email, s.phone].filter(Boolean).join(', '); %>
+<section class="section section--tight">
+  <div class="container container--narrow prose">
+  <% if (lang === 'lt') { %>
+    <p>Ši privatumo politika paaiškina, kaip šokių studija „<%= siteName %>“ (toliau – Studija) tvarko asmens duomenis, kuriuos pateikiate šioje svetainėje.</p>
+
+    <h2>Kokius duomenis renkame</h2>
+    <p>Pildydami registracijos formą pateikiate: vardą ir pavardę, telefono numerį, el. pašto adresą (jei nurodote), šokėjo amžių (jei nurodote), pasirinktą šokių stilių ir savo žinutę.</p>
+
+    <h2>Kam duomenis naudojame</h2>
+    <p>Duomenis naudojame tik tam, kad galėtume su jumis susisiekti dėl registracijos į treniruotes ar bandomąją pamoką ir atsakyti į jūsų klausimus. Duomenų tvarkymo pagrindas – jūsų sutikimas ir veiksmai, atliekami jūsų prašymu prieš sudarant sutartį.</p>
+
+    <h2>Nepilnamečių duomenys</h2>
+    <p>Jei registruojamas vaikas, formą turi užpildyti vienas iš tėvų ar globėjų.</p>
+
+    <h2>Kiek laiko saugome</h2>
+    <p>Registracijos duomenis saugome tol, kol jie reikalingi susisiekti ir suderinti dalyvavimą, bet ne ilgiau kaip 12 mėnesių nuo paskutinio kontakto, nebent tapote studijos nariu.</p>
+
+    <h2>Kam duomenis perduodame</h2>
+    <p>Duomenų neparduodame ir neperduodame tretiesiems asmenims, išskyrus paslaugų teikėjus, kurie užtikrina svetainės veikimą (pvz., svetainės talpinimo paslaugas), ir atvejus, kai to reikalauja teisės aktai.</p>
+
+    <h2>Slapukai ir trečiųjų šalių turinys</h2>
+    <p>Svetainė lankytojams nenaudoja sekimo ar reklamos slapukų. Žemėlapis („Google Maps“) įkeliamas tik tada, kai patys paspaudžiate mygtuką „Rodyti žemėlapį“ – tuomet „Google“ gali gauti jūsų IP adresą ir naudoti savo slapukus.</p>
+
+    <h2>Jūsų teisės</h2>
+    <p>Turite teisę susipažinti su savo duomenimis, prašyti juos ištaisyti ar ištrinti, apriboti ar nesutikti su jų tvarkymu, bet kada atšaukti sutikimą, taip pat pateikti skundą Valstybinei duomenų apsaugos inspekcijai (vdai.lrv.lt).</p>
+
+    <h2>Kontaktai</h2>
+    <p>Dėl asmens duomenų tvarkymo kreipkitės<% if (contact) { %>: <%= contact %><% } else { %> svetainėje nurodytais kontaktais<% } %>.</p>
+  <% } else { %>
+    <p>This privacy policy explains how the dance studio “<%= siteName %>” (the Studio) handles the personal data you provide on this website.</p>
+
+    <h2>What data we collect</h2>
+    <p>When you fill in the registration form you provide: your full name, phone number, email address (if given), the dancer's age (if given), the chosen dance style and your message.</p>
+
+    <h2>What we use it for</h2>
+    <p>We use the data only to contact you about signing up for classes or a trial class and to answer your questions. The legal basis is your consent and steps taken at your request before entering into a contract.</p>
+
+    <h2>Children's data</h2>
+    <p>If a child is being registered, the form must be completed by a parent or guardian.</p>
+
+    <h2>How long we keep it</h2>
+    <p>We keep registration data for as long as it is needed to contact you and arrange attendance, but no longer than 12 months after the last contact, unless you have become a member of the studio.</p>
+
+    <h2>Who we share it with</h2>
+    <p>We do not sell your data or share it with third parties, except for service providers that keep the website running (e.g. website hosting) and where required by law.</p>
+
+    <h2>Cookies and third-party content</h2>
+    <p>The website does not use tracking or advertising cookies for visitors. The map (Google Maps) is loaded only when you click the “Show map” button – Google may then receive your IP address and use its own cookies.</p>
+
+    <h2>Your rights</h2>
+    <p>You have the right to access your data, ask for it to be corrected or deleted, restrict or object to its processing, withdraw your consent at any time, and lodge a complaint with the State Data Protection Inspectorate of Lithuania (vdai.lrv.lt).</p>
+
+    <h2>Contact</h2>
+    <p>For any questions about your personal data, contact us<% if (contact) { %>: <%= contact %><% } else { %> using the contact details on this website<% } %>.</p>
+  <% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

@@ -1,0 +1,31 @@
+<%- include('partials/top', { title: (isNew ? resource.addLabel : 'Redaguoti') + ' · ' + resource.label }) %>
+<% const fieldsFirstI18n = (resource.fields.find((x) => x.i18n) || {}).name; %>
+
+<p class="crumb"><a href="/admin/r/<%= resource.key %>">← <%= resource.label %></a></p>
+
+<% if (errors.length) { %>
+<div class="alert alert--error" role="alert">
+  <strong>Nepavyko išsaugoti:</strong>
+  <ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul>
+</div>
+<% } %>
+
+<form class="card form" method="post" action="<%= action %>?_csrf=<%= encodeURIComponent(csrf) %>" enctype="multipart/form-data" data-dirty>
+  <% resource.fields.forEach((f) => { %>
+    <%- include('partials/field', { f, row, options, fieldsFirstI18n }) %>
+  <% }) %>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit"><%- icon('check', 18) %> Išsaugoti</button>
+    <a class="btn btn--ghost" href="/admin/r/<%= resource.key %>">Atšaukti</a>
+  </div>
+</form>
+
+<% if (!isNew) { %>
+<form class="danger-zone" method="post" action="/admin/r/<%= resource.key %>/<%= row.id %>/delete" data-confirm="Ar tikrai ištrinti šį įrašą? Šio veiksmo atšaukti nebus galima.">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <button class="btn btn--danger" type="submit"><%- icon('trash', 18) %> Ištrinti įrašą</button>
+</form>
+<% } %>
+
+<%- include('partials/bottom') %>

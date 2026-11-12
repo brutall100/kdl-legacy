@@ -1,0 +1,17 @@
+<article class="news-card" data-reveal>
+  <a class="news-card__link" href="<%= paths.news %>/<%= slug(n) %>">
+    <div class="news-card__media<%= n.image ? '' : ' news-card__media--blank' %>">
+      <% if (n.image) { %>
+        <img src="<%= thumb(n.image) %>" alt="" loading="lazy" decoding="async">
+      <% } else { %>
+        <%- dancerSvg('news-card__dancer') %>
+      <% } %>
+    </div>
+    <div class="news-card__body">
+      <time class="news-card__date" datetime="<%= n.published_at %>"><%= fmtDate(n.published_at) %></time>
+      <h3 class="news-card__title"><%= L(n, 'title') %></h3>
+      <% if (L(n, 'summary')) { %><p class="news-card__text"><%= L(n, 'summary') %></p><% } %>
+      <span class="news-card__more"><%= t('news.read') %> <%- icon('arrow', 18) %></span>
+    </div>
+  </a>
+</article>

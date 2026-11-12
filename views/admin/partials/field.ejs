@@ -1,0 +1,97 @@
+<%
+  /* Vienas formos laukas. Kintamieji: f (lauko aprašas), row (reikšmės), options */
+  const names = f.i18n ? [[f.name + '_lt', 'LT'], [f.name + '_en', 'EN']] : [[f.name, '']];
+  const max = { text: 300, url: 500, textarea: 6000, lines: 3000 };
+%>
+<% if (f.type === 'checkbox') { %>
+<div class="fld fld--check">
+  <label class="switch">
+    <input type="checkbox" name="<%= f.name %>" value="1" <%= Number(row[f.name]) ? 'checked' : '' %>>
+    <span class="switch__ui" aria-hidden="true"></span>
+    <span><%= f.label %></span>
+  </label>
+  <% if (f.help) { %><p class="fld__help"><%= f.help %></p><% } %>
+</div>
+<% } else { %>
+<div class="fld fld--<%= f.type %><%= f.i18n ? ' fld--pair' : '' %>">
+  <p class="fld__label" id="lbl_<%= f.name %>"><%= f.label %><% if (f.required) { %> <span class="req" title="Privalomas">*</span><% } %></p>
+  <div class="fld__inputs">
+    <% names.forEach(([n, tag]) => {
+         const v = row[n] == null ? '' : row[n];
+         const id = 'f_' + n;
+         const aria = f.label + (tag ? ' (' + tag + ')' : '');
+         const req = f.required && tag !== 'EN';
+    %>
+    <div class="fld__input">
+      <% if (tag) { %><span class="fld__tag" aria-hidden="true"><%= tag %></span><% } %>
+
+      <% if (f.type === 'textarea' || f.type === 'lines') { %>
+        <textarea class="input" id="<%= id %>" name="<%= n %>" rows="<%= f.rows || 4 %>" maxlength="<%= max[f.type] %>" aria-label="<%= aria %>" placeholder="<%= tag === 'EN' ? '' : (f.placeholder || '') %>" <%= req ? 'required' : '' %>><%= v %></textarea>
+
+      <% } else if (f.type === 'richtext') { %>
+        <div class="rte" data-rte>
+          <div class="rte__bar" role="toolbar" aria-label="Teksto formatavimas" hidden>
+            <button type="button" data-cmd="bold" title="Paryškintas (Ctrl+B)"><b>B</b></button>
+            <button type="button" data-cmd="italic" title="Kursyvas (Ctrl+I)"><i>I</i></button>
+            <button type="button" data-cmd="h2" title="Antraštė">H</button>
+            <button type="button" data-cmd="insertUnorderedList" title="Sąrašas">• —</button>
+            <button type="button" data-cmd="insertOrderedList" title="Numeruotas sąrašas">1.</button>
+            <button type="button" data-cmd="blockquote" title="Citata">“ ”</button>
+            <button type="button" data-cmd="link" title="Nuoroda">🔗</button>
+            <button type="button" data-cmd="removeFormat" title="Išvalyti formatavimą">✕</button>
+          </div>
+          <div class="rte__area input" contenteditable="true" role="textbox" aria-multiline="true" aria-label="<%= aria %>" hidden></div>
+          <textarea class="input rte__src" id="<%= id %>" name="<%= n %>" rows="8" aria-label="<%= aria %>"><%= v %></textarea>
+        </div>
+
+      <% } else if (f.type === 'select') { %>
+        <select class="input" id="<%= id %>" name="<%= n %>" aria-label="<%= aria %>" <%= req ? 'required' : '' %>>
+          <% if (!f.required || f.emptyLabel) { %><option value=""><%= f.emptyLabel || '—' %></option><% } %>
+          <% (options[f.name] || []).forEach((o) => { %>
+            <option value="<%= o.value %>" <%= String(o.value) === String(v) ? 'selected' : '' %>><%= o.label %></option>
+          <% }) %>
+        </select>
+
+      <% } else if (f.type === 'image') { %>
+        <div class="upload" data-upload>
+          <div class="upload__preview<%= v ? '' : ' is-empty' %>" data-preview>
+            <% if (v) { %><img src="<%= thumb(v) %>" alt="Dabartinė nuotrauka"><% } else { %><span><%- icon('image', 30) %></span><% } %>
+          </div>
+          <div class="upload__body">
+            <input class="upload__file" id="<%= id %>" type="file" name="<%= n %>" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="<%= aria %>">
+            <p class="fld__help">JPG, PNG arba WebP. Nuotrauka bus automatiškai sumažinta.</p>
+            <% if (v && !f.required) { %>
+              <label class="check"><input type="checkbox" name="<%= n %>__remove" value="1"> <span>Pašalinti dabartinę nuotrauką</span></label>
+            <% } %>
+          </div>
+        </div>
+
+      <% } else if (f.type === 'video') { %>
+        <div class="upload">
+          <% if (v) { %>
+            <video class="upload__video" src="<%= img(v) %>" muted controls preload="metadata"></video>
+          <% } %>
+          <div class="upload__body">
+            <input class="upload__file" id="<%= id %>" type="file" name="<%= n %>" accept="video/mp4,video/webm" aria-label="<%= aria %>">
+            <% if (v) { %>
+              <label class="check"><input type="checkbox" name="<%= n %>__remove" value="1"> <span>Pašalinti vaizdo įrašą (vėl bus rodomi animuoti šokėjai)</span></label>
+            <% } %>
+          </div>
+        </div>
+
+      <% } else { %>
+        <input class="input" id="<%= id %>" name="<%= n %>" value="<%= v %>" aria-label="<%= aria %>"
+               type="<%= f.type === 'date' ? 'date' : f.type === 'time' ? 'time' : 'text' %>"
+               <%- f.type === 'url' ? 'inputmode="url" placeholder="https://"' : '' %>
+               <% if (f.type === 'text') { %>maxlength="<%= max.text %>" placeholder="<%= tag === 'EN' ? '' : (f.placeholder || '') %>"<% } %>
+               <%= req ? 'required' : '' %>>
+      <% } %>
+    </div>
+    <% }) %>
+  </div>
+  <% if (f.help) { %><p class="fld__help"><%= f.help %></p><% } %>
+  <% if (f.i18n && f.name === fieldsFirstI18n) { %>
+    <p class="fld__help">EN laukus pildyti nebūtina – jei jie tušti, angliškoje svetainės versijoje bus rodomas lietuviškas tekstas.</p>
+  <% } %>
+</div>
+<% } %>

@@ -1,0 +1,75 @@
+</main>
+
+<%
+  const fAnchor = (id) => (isHome ? '#' + id : paths.home + '#' + id);
+  const fAddress = [s.address, s.city].filter(Boolean).join(', ');
+%>
+<footer class="site-footer">
+  <div class="site-footer__word" aria-hidden="true"><span><%= siteName %></span></div>
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a class="logo logo--lg" href="<%= paths.home %>" aria-label="<%= siteName %> – <%= t('nav.home') %>">
+        <% if (s.logo) { %>
+          <img class="logo__img" src="<%= img(s.logo) %>" alt="<%= siteName %>">
+        <% } else { %>
+          <%- logoSvg('logo__svg') %>
+        <% } %>
+      </a>
+      <p class="muted"><%= t('footer.tagline') %></p>
+      <% if (socials.length) { %>
+      <ul class="socials" aria-label="<%= t('contacts.follow') %>">
+        <% socials.forEach((x) => { %>
+          <li><a href="<%= x.url %>" target="_blank" rel="noopener noreferrer" aria-label="<%= x.key %>"><%- icon(x.key, 22) %></a></li>
+        <% }) %>
+      </ul>
+      <% } %>
+    </div>
+
+    <nav class="site-footer__nav" aria-label="<%= t('footer.nav') %>">
+      <h2 class="site-footer__title"><%= t('footer.nav') %></h2>
+      <ul>
+        <li><a href="<%= fAnchor('apie') %>"><%= t('nav.about') %></a></li>
+        <% if (has.classes) { %><li><a href="<%= fAnchor('stiliai') %>"><%= t('nav.classes') %></a></li><% } %>
+        <% if (has.schedule) { %><li><a href="<%= fAnchor('tvarkarastis') %>"><%= t('nav.schedule') %></a></li><% } %>
+        <% if (has.prices) { %><li><a href="<%= fAnchor('kainos') %>"><%= t('nav.prices') %></a></li><% } %>
+        <li><a href="<%= paths.news %>"><%= t('nav.news') %></a></li>
+        <li><a href="<%= paths.events %>"><%= t('nav.events') %></a></li>
+        <% if (has.gallery) { %><li><a href="<%= paths.gallery %>"><%= t('nav.gallery') %></a></li><% } %>
+        <li><a href="<%= fAnchor('registracija') %>"><%= t('nav.register') %></a></li>
+      </ul>
+    </nav>
+
+    <div class="site-footer__contact">
+      <h2 class="site-footer__title"><%= t('contacts.label') %></h2>
+      <ul>
+        <% if (fAddress) { %><li><%= fAddress %></li><% } %>
+        <% if (s.phone) { %><li><a href="tel:<%= s.phone.replace(/[^+\d]/g, '') %>"><%= s.phone %></a></li><% } %>
+        <% if (s.email) { %><li><a href="mailto:<%= s.email %>"><%= s.email %></a></li><% } %>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>© <%= year %> <%= siteName %>. <%= t('footer.rights') %></p>
+    <p>
+      <a href="<%= paths.privacy %>"><%= t('footer.privacy') %></a>
+      <span aria-hidden="true"> · </span>
+      <a href="#main" data-top><%= t('footer.top') %> ↑</a>
+    </p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="<%= t('gallery.label') %>">
+  <button class="lightbox__close" type="button" data-lb-close aria-label="<%= t('nav.close') %>"><%- icon('close', 26) %></button>
+  <button class="lightbox__nav lightbox__nav--prev" type="button" data-lb-prev aria-label="<%= t('gallery.prev') %>"><%- icon('arrow', 26) %></button>
+  <figure class="lightbox__figure">
+    <img class="lightbox__img" alt="" data-lb-img>
+    <figcaption class="lightbox__caption" data-lb-caption></figcaption>
+  </figure>
+  <button class="lightbox__nav lightbox__nav--next" type="button" data-lb-next aria-label="<%= t('gallery.next') %>"><%- icon('arrow', 26) %></button>
+</div>
+
+<script src="<%= asset('/js/fx.js') %>" defer></script>
+<script src="<%= asset('/js/site.js') %>" defer></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<%- include('partials/page-head', { heading: t('gallery.pageTitle') }) %>
+
+<section class="section section--tight">
+  <div class="container">
+    <% if (items.length) { %>
+      <div class="gallery__grid" data-gallery>
+        <% items.forEach((g) => { %><%- include('partials/gallery-item', { g }) %><% }) %>
+      </div>
+    <% } else { %>
+      <p class="empty"><%= t('gallery.empty') %></p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

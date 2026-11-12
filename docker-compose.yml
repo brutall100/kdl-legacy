@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - kdlegacy-data:/data
+
+volumes:
+  kdlegacy-data:

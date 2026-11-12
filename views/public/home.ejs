@@ -1,0 +1,451 @@
+<%- include('partials/head') %>
+
+<%
+  const styleWords = classes.flatMap((c) => L(c, 'name').split('/').map((x) => x.trim()).filter(Boolean));
+  const marquee = styleWords.length ? styleWords : [t('about.pillar1.title'), t('about.pillar2.title'), t('about.pillar3.title')];
+  const aboutTitle = S('about_title');
+  const aboutWords = aboutTitle.split(/\s+/);
+  const aboutLast = aboutWords.pop();
+  const stats = [1, 2, 3].map((n) => ({ value: (s['stat' + n + '_value'] || '').trim(), label: S('stat' + n + '_label') })).filter((x) => x.value);
+  const address = [s.address, s.city].filter(Boolean).join(', ');
+  const mapQuery = (s.map_query || (s.address ? address : '')).trim();
+  const slotTitle = (x) => L(x, 'title') || L({ class_lt: x.class_lt, class_en: x.class_en }, 'class');
+  const scheduleClasses = classes.filter((c) => schedule.some((d) => d.items.some((x) => x.class_id === c.id)));
+%>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero<%= s.hero_video ? ' hero--video' : '' %>" id="top">
+  <div class="hero__bg" aria-hidden="true">
+    <% if (s.hero_video) { %>
+      <video class="hero__video" src="<%= img(s.hero_video) %>" autoplay muted loop playsinline preload="metadata"></video>
+    <% } %>
+    <div class="hero__beam hero__beam--1"></div>
+    <div class="hero__beam hero__beam--2"></div>
+    <div class="hero__beam hero__beam--3"></div>
+    <% if (!s.hero_video) { %><canvas class="hero__dancers" id="hero-dancers"></canvas><% } %>
+    <div class="hero__fade"></div>
+  </div>
+
+  <div class="container hero__inner">
+    <p class="overline hero__overline"><span class="dot"></span><%= S('hero_overline') %></p>
+    <h1 class="hero__title">
+      <% if (s.logo) { %>
+        <img class="hero__logo hero__logo--img" src="<%= img(s.logo) %>" alt="<%= siteName %>">
+      <% } else { %>
+        <%- logoSvg('hero__logo', siteName) %>
+      <% } %>
+    </h1>
+    <p class="hero__tagline"><%= S('hero_tagline') %></p>
+    <p class="hero__text"><%= S('hero_text') %></p>
+    <div class="hero__actions">
+      <a class="btn btn--primary btn--lg" href="#registracija"><%= t('hero.cta') %> <%- icon('arrow', 20) %></a>
+      <% if (schedule.length) { %><a class="btn btn--ghost btn--lg" href="#tvarkarastis"><%= t('hero.cta2') %></a><% } %>
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#apie"><span class="hero__scroll-line" aria-hidden="true"></span><%= t('hero.scroll') %></a>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <% for (let rep = 0; rep < 2; rep++) { %>
+      <div class="marquee__group">
+        <% for (let k = 0; k < 3; k++) { marquee.forEach((w) => { %><span><%= w %></span><i>✦</i><% }) } %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- ============================ APIE ============================ -->
+<section class="section about" id="apie">
+  <div class="container about__grid">
+    <div class="about__main" data-reveal>
+      <p class="label"><%= t('about.label') %></p>
+      <h2 class="h2"><%= aboutWords.join(' ') %> <em><%= aboutLast %></em></h2>
+      <div class="prose prose--lead"><%- paragraphs(S('about_text')) %></div>
+      <% if (stats.length) { %>
+      <dl class="stats">
+        <% stats.forEach((x) => { %>
+          <div class="stats__item"><dt><%= x.value %></dt><dd><%= x.label %></dd></div>
+        <% }) %>
+      </dl>
+      <% } %>
+    </div>
+
+    <div class="about__side" data-reveal>
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 200 200" class="badge__ring">
+          <defs><path id="badge-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+          <text><textPath href="#badge-circle" textLength="486"><%= t('about.badge') %></textPath></text>
+        </svg>
+        <svg viewBox="0 0 24 24" class="badge__star"><path d="M12 1.500 14.400 9.600 22.500 12l-8.100 2.400L12 22.500 9.600 14.400 1.500 12l8.100-2.400z"/></svg>
+      </div>
+      <ol class="pillars">
+        <% [1, 2, 3].forEach((n) => { %>
+        <li class="pillar">
+          <span class="pillar__num">0<%= n %></span>
+          <div>
+            <h3 class="pillar__title"><%= t('about.pillar' + n + '.title') %></h3>
+            <p class="pillar__text"><%= t('about.pillar' + n + '.text') %></p>
+          </div>
+        </li>
+        <% }) %>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STILIAI ============================ -->
+<% if (classes.length) { %>
+<section class="section classes" id="stiliai">
+  <div class="container">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('classes.label') %></p>
+      <h2 class="h2"><%= t('classes.title') %> <em><%= t('classes.titleAccent') %></em></h2>
+    </header>
+    <div class="classes__grid">
+      <% classes.forEach((c, i) => { %>
+      <article class="class-card<%= c.image ? ' class-card--img' : '' %>" data-reveal>
+        <% if (c.image) { %><img class="class-card__bg" src="<%= thumb(c.image) %>" alt="" loading="lazy" decoding="async"><% } %>
+        <span class="class-card__num" aria-hidden="true"><%= String(i + 1).padStart(2, '0') %></span>
+        <h3 class="class-card__title"><%= L(c, 'name') %></h3>
+        <% if (L(c, 'description')) { %><p class="class-card__text"><%= L(c, 'description') %></p><% } %>
+        <ul class="chips">
+          <% if (L(c, 'age')) { %><li><%= L(c, 'age') %></li><% } %>
+          <% if (L(c, 'level')) { %><li><%= L(c, 'level') %></li><% } %>
+        </ul>
+        <a class="class-card__cta" href="#registracija" data-pick-class="<%= L(c, 'name') %>"><%= t('classes.cta') %> <%- icon('arrow', 18) %></a>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ TVARKARAŠTIS ============================ -->
+<% if (schedule.length) { %>
+<section class="section schedule" id="tvarkarastis">
+  <div class="container">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('schedule.label') %></p>
+      <h2 class="h2"><%= t('schedule.title') %> <em><%= t('schedule.titleAccent') %></em></h2>
+    </header>
+
+    <% if (scheduleClasses.length > 1) { %>
+    <div class="filters" role="group" aria-label="<%= t('schedule.label') %>" data-filters data-reveal>
+      <button class="filter is-active" type="button" data-filter="" aria-pressed="true"><%= t('schedule.all') %></button>
+      <% scheduleClasses.forEach((c) => { %>
+        <button class="filter" type="button" data-filter="<%= c.id %>" aria-pressed="false"><%= L(c, 'name') %></button>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <div class="days">
+      <% schedule.forEach((d) => { %>
+      <div class="day" data-day="<%= d.weekday %>" data-reveal>
+        <h3 class="day__name">
+          <span class="day__short" aria-hidden="true"><%= t('weekdaysShort')[d.weekday - 1] %></span>
+          <span><%= t('weekdays')[d.weekday - 1] %></span>
+        </h3>
+        <ul class="day__slots">
+          <% d.items.forEach((x) => { %>
+          <li class="slot" data-class="<%= x.class_id || '' %>">
+            <p class="slot__time"><%= x.start_time %><% if (x.end_time) { %><span>–<%= x.end_time %></span><% } %></p>
+            <p class="slot__title"><%= slotTitle(x) %></p>
+            <p class="slot__meta">
+              <% const meta = [L(x, 'group_name'), x.trainer, x.hall].filter(Boolean); %>
+              <%= meta.join(' · ') %>
+            </p>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+      <% }) %>
+    </div>
+    <p class="note" data-reveal><%= t('schedule.note') %></p>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ TRENERIAI ============================ -->
+<% if (trainers.length) { %>
+<section class="section trainers" id="treneriai">
+  <div class="container">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('trainers.label') %></p>
+      <h2 class="h2"><%= t('trainers.title') %> <em><%= t('trainers.titleAccent') %></em></h2>
+    </header>
+    <div class="trainers__grid">
+      <% trainers.forEach((p) => { %>
+      <article class="trainer" data-reveal>
+        <div class="trainer__photo">
+          <% if (p.image) { %>
+            <img src="<%= thumb(p.image) %>" alt="<%= p.name %>" loading="lazy" decoding="async">
+          <% } else { %>
+            <span class="trainer__mono" aria-hidden="true"><%= p.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('') %></span>
+          <% } %>
+        </div>
+        <div class="trainer__body">
+          <h3 class="trainer__name"><%= p.name %></h3>
+          <% if (L(p, 'role')) { %><p class="trainer__role"><%= L(p, 'role') %></p><% } %>
+          <% if (L(p, 'bio')) { %><p class="trainer__bio"><%= L(p, 'bio') %></p><% } %>
+          <% if (p.instagram) { %>
+            <a class="trainer__link" href="<%= p.instagram %>" target="_blank" rel="noopener noreferrer"><%- icon('instagram', 18) %> Instagram</a>
+          <% } %>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ KAINOS ============================ -->
+<% if (prices.length) { %>
+<section class="section prices" id="kainos">
+  <div class="container">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('prices.label') %></p>
+      <h2 class="h2"><%= t('prices.title') %> <em><%= t('prices.titleAccent') %></em></h2>
+    </header>
+    <div class="prices__grid">
+      <% prices.forEach((p) => { %>
+      <article class="price<%= p.highlighted ? ' price--hot' : '' %>" data-reveal>
+        <% if (p.highlighted) { %><p class="price__flag"><%= t('prices.popular') %></p><% } %>
+        <h3 class="price__name"><%= L(p, 'name') %></h3>
+        <p class="price__amount"><strong><%= p.price %></strong><% if (L(p, 'period')) { %> <span><%= L(p, 'period') %></span><% } %></p>
+        <% const feats = lines(L(p, 'features')); if (feats.length) { %>
+        <ul class="price__list">
+          <% feats.forEach((f) => { %><li><%- icon('check', 18) %><span><%= f %></span></li><% }) %>
+        </ul>
+        <% } %>
+        <a class="btn <%= p.highlighted ? 'btn--dark' : 'btn--ghost' %>" href="#registracija"><%= t('prices.cta') %></a>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ RENGINIAI ============================ -->
+<section class="section events" id="renginiai">
+  <div class="container">
+    <header class="section__head section__head--row" data-reveal>
+      <div>
+        <p class="label"><%= t('events.label') %></p>
+        <h2 class="h2"><%= t('events.title') %> <em><%= t('events.titleAccent') %></em></h2>
+      </div>
+      <a class="link-arrow" href="<%= paths.events %>"><%= t('events.all') %> <%- icon('arrow', 18) %></a>
+    </header>
+    <% if (events.length) { %>
+      <ul class="event-list">
+        <% events.forEach((e) => { %><%- include('partials/event-row', { e }) %><% }) %>
+      </ul>
+    <% } else { %>
+      <p class="empty" data-reveal><%= t('events.empty') %></p>
+    <% } %>
+  </div>
+</section>
+
+<!-- ============================ NAUJIENOS ============================ -->
+<% if (news.length) { %>
+<section class="section news" id="naujienos">
+  <div class="container">
+    <header class="section__head section__head--row" data-reveal>
+      <div>
+        <p class="label"><%= t('news.label') %></p>
+        <h2 class="h2"><%= t('news.title') %> <em><%= t('news.titleAccent') %></em></h2>
+      </div>
+      <a class="link-arrow" href="<%= paths.news %>"><%= t('news.all') %> <%- icon('arrow', 18) %></a>
+    </header>
+    <div class="news__grid">
+      <% news.forEach((n) => { %><%- include('partials/news-card', { n }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ GALERIJA ============================ -->
+<% if (gallery.length) { %>
+<section class="section gallery" id="galerija">
+  <div class="container">
+    <header class="section__head section__head--row" data-reveal>
+      <div>
+        <p class="label"><%= t('gallery.label') %></p>
+        <h2 class="h2"><%= t('gallery.title') %> <em><%= t('gallery.titleAccent') %></em></h2>
+      </div>
+      <% if (galleryCount > gallery.length) { %>
+      <a class="link-arrow" href="<%= paths.gallery %>"><%= t('gallery.all') %> (<%= galleryCount %>) <%- icon('arrow', 18) %></a>
+      <% } %>
+    </header>
+    <div class="gallery__grid gallery__grid--home" data-gallery>
+      <% gallery.forEach((g) => { %><%- include('partials/gallery-item', { g }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ ATSILIEPIMAI ============================ -->
+<% if (testimonials.length) { %>
+<section class="section testimonials" id="atsiliepimai">
+  <div class="container">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('testimonials.label') %></p>
+      <h2 class="h2"><%= t('testimonials.title') %> <em><%= t('testimonials.titleAccent') %></em></h2>
+    </header>
+    <div class="quotes">
+      <% testimonials.forEach((q) => { %>
+      <figure class="quote" data-reveal>
+        <blockquote><p><%= L(q, 'text') %></p></blockquote>
+        <figcaption><strong><%= q.author %></strong><% if (L(q, 'role')) { %><span><%= L(q, 'role') %></span><% } %></figcaption>
+      </figure>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ D.U.K. ============================ -->
+<% if (faq.length) { %>
+<section class="section faq" id="duk">
+  <div class="container faq__grid">
+    <header class="section__head" data-reveal>
+      <p class="label"><%= t('faq.label') %></p>
+      <h2 class="h2"><%= t('faq.title') %> <em><%= t('faq.titleAccent') %></em></h2>
+    </header>
+    <div class="faq__list" data-reveal>
+      <% faq.forEach((q) => { %>
+      <details class="faq__item">
+        <summary><span><%= L(q, 'question') %></span><i aria-hidden="true"></i></summary>
+        <div class="faq__answer"><%- paragraphs(L(q, 'answer')) %></div>
+      </details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============================ REGISTRACIJA ============================ -->
+<section class="section register" id="registracija">
+  <div class="container register__grid">
+    <div class="register__intro" data-reveal>
+      <p class="label label--dark"><%= t('register.label') %></p>
+      <h2 class="h2 h2--xl"><%= t('register.title') %> <em><%= t('register.titleAccent') %></em></h2>
+      <p class="register__text"><%= t('register.text') %></p>
+      <ul class="register__contacts">
+        <% if (s.phone) { %><li><a href="tel:<%= s.phone.replace(/[^+\d]/g, '') %>"><%- icon('phone', 20) %> <%= s.phone %></a></li><% } %>
+        <% if (s.email) { %><li><a href="mailto:<%= s.email %>"><%- icon('mail', 20) %> <%= s.email %></a></li><% } %>
+      </ul>
+    </div>
+
+    <div class="register__panel" data-reveal>
+      <div class="form-ok<%= sent ? ' is-visible' : '' %>" data-form-ok role="status" <%= sent ? '' : 'hidden' %>>
+        <span class="form-ok__icon" aria-hidden="true"><%- icon('check', 34) %></span>
+        <h3><%= t('register.okTitle') %></h3>
+        <p><%= t('register.okText') %></p>
+      </div>
+
+      <form class="form" action="<%= paths.register %>" method="post" data-register-form <%= sent ? 'hidden' : '' %>
+            data-err="<%= t('register.errGeneric') %>" data-sending="<%= t('register.sending') %>">
+        <input type="hidden" name="token" value="<%= formToken %>">
+        <div class="hp" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <div class="form__row">
+          <label class="field">
+            <span class="field__label"><%= t('register.name') %> *</span>
+            <input type="text" name="name" required minlength="2" maxlength="120" autocomplete="name">
+          </label>
+          <label class="field">
+            <span class="field__label"><%= t('register.phone') %> *</span>
+            <input type="tel" name="phone" required maxlength="40" autocomplete="tel" placeholder="+370">
+          </label>
+        </div>
+        <div class="form__row">
+          <label class="field">
+            <span class="field__label"><%= t('register.email') %> <small>(<%= t('register.optional') %>)</small></span>
+            <input type="email" name="email" maxlength="160" autocomplete="email">
+          </label>
+          <label class="field">
+            <span class="field__label"><%= t('register.age') %> <small>(<%= t('register.optional') %>)</small></span>
+            <input type="text" name="age" maxlength="20" inputmode="numeric">
+          </label>
+        </div>
+        <label class="field">
+          <span class="field__label"><%= t('register.class') %></span>
+          <select name="class_name" data-class-select>
+            <option value=""><%= t('register.classAny') %></option>
+            <% classes.forEach((c) => { %><option value="<%= L(c, 'name') %>"><%= L(c, 'name') %></option><% }) %>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label"><%= t('register.message') %> <small>(<%= t('register.optional') %>)</small></span>
+          <textarea name="message" rows="3" maxlength="2000" placeholder="<%= t('register.messagePh') %>"></textarea>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="1" required>
+          <span><%= t('register.consent') %> <a href="<%= paths.privacy %>" target="_blank" rel="noopener"><%= t('register.privacy') %></a>.</span>
+        </label>
+        <p class="form__error" data-form-error role="alert" hidden></p>
+        <button class="btn btn--dark btn--lg form__submit" type="submit"><span data-submit-label><%= t('register.submit') %></span> <%- icon('arrow', 20) %></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KONTAKTAI ============================ -->
+<section class="section contacts" id="kontaktai">
+  <div class="container contacts__grid">
+    <div data-reveal>
+      <p class="label"><%= t('contacts.label') %></p>
+      <h2 class="h2"><%= t('contacts.title') %> <em><%= t('contacts.titleAccent') %></em></h2>
+      <dl class="contact-list">
+        <% if (address) { %>
+        <div><dt><%- icon('pin', 20) %> <%= t('contacts.address') %></dt><dd><%= address %></dd></div>
+        <% } %>
+        <% if (s.phone) { %>
+        <div><dt><%- icon('phone', 20) %> <%= t('contacts.phone') %></dt><dd><a href="tel:<%= s.phone.replace(/[^+\d]/g, '') %>"><%= s.phone %></a></dd></div>
+        <% } %>
+        <% if (s.email) { %>
+        <div><dt><%- icon('mail', 20) %> <%= t('contacts.email') %></dt><dd><a href="mailto:<%= s.email %>"><%= s.email %></a></dd></div>
+        <% } %>
+        <% if (S('hours')) { %>
+        <div><dt><%- icon('clock', 20) %> <%= t('contacts.hours') %></dt><dd><%- paragraphs(S('hours')) %></dd></div>
+        <% } %>
+      </dl>
+      <% if (socials.length) { %>
+      <p class="contacts__follow"><%= t('contacts.follow') %></p>
+      <ul class="socials socials--lg">
+        <% socials.forEach((x) => { %>
+          <li><a href="<%= x.url %>" target="_blank" rel="noopener noreferrer"><%- icon(x.key, 24) %><span><%= x.key %></span></a></li>
+        <% }) %>
+      </ul>
+      <% } %>
+    </div>
+
+    <div class="map" data-reveal>
+      <% if (mapQuery) { %>
+        <div class="map__frame" data-map="https://www.google.com/maps?q=<%= encodeURIComponent(mapQuery) %>&output=embed&hl=<%= lang %>" data-title="<%= t('contacts.mapTitle') %>">
+          <div class="map__placeholder">
+            <span class="map__pin" aria-hidden="true"><%- icon('pin', 44) %></span>
+            <p class="map__addr"><%= address || mapQuery %></p>
+            <button class="btn btn--ghost" type="button" data-map-load><%= t('contacts.mapLoad') %></button>
+            <p class="map__note"><%= t('contacts.mapNote') %></p>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="map__frame map__frame--static">
+          <div class="map__placeholder">
+            <span class="map__pin" aria-hidden="true"><%- icon('pin', 44) %></span>
+            <p class="map__addr"><%= s.city || 'Jonava' %></p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json"><%- jsonLd %></script>
+
+<%- include('partials/foot') %>
