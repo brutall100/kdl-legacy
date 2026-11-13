@@ -1057,6 +1057,18 @@ main {
     align-items: flex-end;
     padding-bottom: 5rem;
   }
+  /* Telefone viršutinė eilutė – pačiame viršuje, kad neuždengtų šokėjų */
+  .hero__inner {
+    position: static;
+  }
+  .hero__overline {
+    position: absolute;
+    top: calc(var(--header-h) + 0.9rem);
+    left: var(--gutter);
+    right: var(--gutter);
+    margin: 0;
+    z-index: 1;
+  }
   .hero__fade {
     background:
       linear-gradient(to top, var(--bg) 2%, rgba(7, 6, 10, 0.82) 40%, rgba(7, 6, 10, 0.1) 78%),

@@ -666,10 +666,14 @@
       const { w, h } = size;
       if (w < 860) {
         // Telefone – vienas šokėjas virš teksto (kad neuždengtų logotipo).
-        const inner = document.querySelector('.hero__inner');
-        const top = inner ? inner.offsetTop : h * 0.5;
-        const gy = Math.max(h * 0.3, top - 18);
-        const H = Math.min(gy - 96, w * 0.62);
+        // Telefone šokėjai stovi tarp viršutinės eilutės (viršuje) ir logotipo.
+        const title = document.querySelector('.hero__title');
+        const heroEl = canvas.closest('.hero');
+        const over = document.querySelector('.hero__overline');
+        const top = title && heroEl ? title.getBoundingClientRect().top - heroEl.getBoundingClientRect().top : h * 0.5;
+        const ceil = over && heroEl ? over.getBoundingClientRect().bottom - heroEl.getBoundingClientRect().top : 96;
+        const gy = Math.max(h * 0.3, top - 14);
+        const H = Math.min(gy - ceil - 26, w * 0.62);
         if (H < 110) return [null, null, null];
         const x = w * 0.66;
         const kidH = H * 0.56;
