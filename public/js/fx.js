@@ -692,6 +692,26 @@
 
     let slots = layout();
 
+    // Nupiešta gatvė (views/public/partials/street.ejs): šaligatvis po šokėjų kojomis.
+    // Piešinio koordinatės: šaligatvis y = 792, pagrindinė šokėja x ≈ 1066, jos aukštis ≈ 547.
+    const street = document.getElementById('hero-street');
+    function placeStreet() {
+      if (!street) return;
+      const lead = slots[2];
+      if (!lead) {
+        street.classList.remove('is-placed');
+        return;
+      }
+      const k = lead.H / 547;
+      street.style.setProperty('--st-w', `${1440 * k}px`);
+      street.style.setProperty('--st-h', `${900 * k}px`);
+      street.style.setProperty('--st-x', `${lead.x - 1066 * k}px`);
+      street.style.setProperty('--st-y', `${lead.gy - 792 * k}px`);
+      street.style.setProperty('--st-fade', `${lead.gy}px`);
+      street.classList.add('is-placed');
+    }
+    placeStreet();
+
     function draw(t, still) {
       const { w, h, dpr } = size;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -705,6 +725,7 @@
     function resize() {
       size = fitCanvas(canvas, 2);
       slots = layout();
+      placeStreet();
       crew.forEach((d) => {
         for (const k in d.trails) d.trails[k].length = 0;
       });

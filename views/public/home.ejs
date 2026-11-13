@@ -22,7 +22,10 @@
     <div class="hero__beam hero__beam--1"></div>
     <div class="hero__beam hero__beam--2"></div>
     <div class="hero__beam hero__beam--3"></div>
-    <% if (!s.hero_video) { %><canvas class="hero__dancers" id="hero-dancers"></canvas><% } %>
+    <% if (!s.hero_video) { %>
+      <div class="hero__street-wrap" id="hero-street"><%- include('partials/street') %></div>
+      <canvas class="hero__dancers" id="hero-dancers"></canvas>
+    <% } %>
     <div class="hero__fade"></div>
   </div>
 

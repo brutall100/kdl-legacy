@@ -807,6 +807,89 @@ main {
   background: linear-gradient(120deg, rgba(255, 46, 147, 0.5), rgba(255, 46, 147, 0.15));
   mix-blend-mode: multiply;
 }
+/* Nupiešta neoninė gatvė už šokėjų (vietą nustato fx.js) */
+.hero__street-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1s;
+  -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 62%);
+  mask-image: linear-gradient(90deg, transparent 30%, #000 62%);
+}
+.hero__street-wrap.is-placed {
+  opacity: 0.42;
+}
+.hero__street {
+  position: absolute;
+  left: var(--st-x, 0);
+  top: var(--st-y, 0);
+  width: var(--st-w, 100%);
+  height: var(--st-h, 100%);
+}
+.hero__street * {
+  fill: none;
+  stroke: rgba(var(--accent-rgb, 255, 46, 147), 0.55);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+.hero__street .b {
+  stroke: rgba(255, 46, 147, 0.42);
+  stroke-width: 1.5;
+  fill: rgba(7, 6, 10, 0.7);
+}
+.hero__street .w {
+  stroke: rgba(255, 46, 147, 0.1);
+}
+.hero__street .wl {
+  stroke: rgba(255, 120, 190, 0.3);
+  fill: rgba(255, 46, 147, 0.14);
+}
+.hero__street .t {
+  stroke: rgba(255, 46, 147, 0.35);
+}
+.hero__street .curb {
+  stroke: rgba(255, 46, 147, 0.7);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px rgba(255, 46, 147, 0.8));
+}
+.hero__street .dash {
+  stroke: rgba(255, 46, 147, 0.35);
+  stroke-width: 3;
+  stroke-dasharray: 60 40;
+}
+.hero__street .pole {
+  stroke: rgba(255, 46, 147, 0.6);
+  stroke-width: 2.2;
+}
+.hero__street .lamp {
+  fill: #ffd6ea;
+  stroke: none;
+  filter: drop-shadow(0 0 8px #ff2e93);
+}
+.hero__street .lampglow {
+  fill: rgba(255, 46, 147, 0.12);
+  stroke: none;
+  filter: blur(12px);
+}
+.hero__street .brick {
+  stroke: rgba(255, 46, 147, 0.13);
+}
+.hero__street .graffiti {
+  font-family: var(--font-script);
+  font-size: 92px;
+  stroke: rgba(255, 46, 147, 0.35);
+  stroke-width: 1.6;
+}
+@media (max-width: 860px) {
+  .hero__street-wrap {
+    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(var(--st-fade, 400px) - 30px), transparent calc(var(--st-fade, 400px) + 50px));
+    mask-image: linear-gradient(180deg, #000 0, #000 calc(var(--st-fade, 400px) - 30px), transparent calc(var(--st-fade, 400px) + 50px));
+  }
+  .hero__street-wrap.is-placed {
+    opacity: 0.5;
+  }
+}
 .hero__dancers {
   position: absolute;
   inset: 0;
