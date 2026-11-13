@@ -1056,6 +1056,8 @@ main {
   .hero {
     align-items: flex-end;
     padding-bottom: 5rem;
+    /* vieta šokėjams virš logotipo: meniu + užrašas + šokėjų zona */
+    padding-top: calc(var(--header-h) + 2.6rem + clamp(200px, 34svh, 320px));
   }
   /* Telefone viršutinė eilutė – pačiame viršuje, kad neuždengtų šokėjų */
   .hero__inner {

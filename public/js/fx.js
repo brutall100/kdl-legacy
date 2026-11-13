@@ -674,7 +674,7 @@
         const ceil = over && heroEl ? over.getBoundingClientRect().bottom - heroEl.getBoundingClientRect().top : 96;
         const gy = Math.max(h * 0.3, top - 14);
         const H = Math.min(gy - ceil - 26, w * 0.62);
-        if (H < 110) return [null, null, null];
+        if (H < 80) return [null, null, null];
         const x = w * 0.66;
         const kidH = H * 0.56;
         return [
