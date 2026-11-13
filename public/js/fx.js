@@ -196,6 +196,7 @@
     shoulder: 0.084,
     hip: 0.068,
     waist: 0.78,
+    female: true, // moteriška figūra su sijonėliu
     armU: 0.145,
     armL: 0.14,
     legU: 0.235,
@@ -310,6 +311,7 @@
   }
 
   function tracePath(c, J, body, hair) {
+    if (body.female) return traceFemale(c, J, body, hair);
     const R = body.head;
     const pinch = body.waist || 0.55;
     // liemuo – kontūras su įlinkiu ties juosmeniu
@@ -342,6 +344,102 @@
     c.lineTo(J.knR.x, J.knR.y);
     c.lineTo(J.ftR.x, J.ftR.y);
     c.lineTo(J.toeR.x, J.toeR.y);
+    c.moveTo(J.headC.x + R, J.headC.y);
+    c.arc(J.headC.x, J.headC.y, R, 0, TAU);
+    if (hair) traceHair(c, J, R, hair.style, hair.off);
+  }
+
+  /** Moteriška figūra: krūtinės linija, siaura talija, klubai ir plazdantis sijonėlis. */
+  function traceFemale(c, J, body, hair) {
+    const R = body.head;
+    const off = hair ? hair.off : 0;
+    const lerp = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k });
+    const axis = (k) => lerp(J.chest, J.hipC, k);
+    // taškas ant liemens kontūro: k – aukštis (0 pečiai, 1 klubai), out – plotis nuo ašies
+    const side = (sh, hp, k, out) => {
+      const a = axis(k);
+      const e = lerp(sh, hp, k);
+      return { x: a.x + (e.x - a.x) * out, y: a.y + (e.y - a.y) * out };
+    };
+    const curve = (sh, hp) => ({
+      bust: side(sh, hp, 0.24, 1.08),
+      waist: side(sh, hp, 0.62, 0.66),
+      hip: side(sh, hp, 1.0, 1.28),
+    });
+    const L = curve(J.shL, J.hipL);
+    const Rt = curve(J.shR, J.hipR);
+
+    c.beginPath();
+    // pečiai ir liemens šonai
+    c.moveTo(J.shL.x, J.shL.y);
+    c.lineTo(J.shR.x, J.shR.y);
+    for (const [sh, k] of [[J.shR, Rt], [J.shL, L]]) {
+      c.moveTo(sh.x, sh.y);
+      c.bezierCurveTo(k.bust.x, k.bust.y, k.waist.x, k.waist.y - 0.02, k.waist.x, k.waist.y);
+      c.quadraticCurveTo(
+        k.hip.x + (k.hip.x - J.hipC.x) * 0.15,
+        (k.waist.y + k.hip.y) / 2 + 0.02,
+        k.hip.x,
+        k.hip.y
+      );
+    }
+    // krūtinės linija
+    const b1 = side(J.shL, J.hipL, 0.3, 0.55);
+    const b2 = side(J.shR, J.hipR, 0.3, 0.55);
+    const bm = axis(0.36);
+    c.moveTo(b1.x, b1.y);
+    c.quadraticCurveTo(bm.x, bm.y + 0.012, b2.x, b2.y);
+
+    // sijonėlis: kraštai platėja žemyn klubų linijos statmena kryptimi, plazda kartu su plaukais
+    let hx = Rt.hip.x - L.hip.x;
+    let hy = Rt.hip.y - L.hip.y;
+    const hl = Math.hypot(hx, hy) || 1;
+    hx /= hl;
+    hy /= hl;
+    const dx = -hy; // „žemyn“ nuo klubų linijos
+    const dy = hx;
+    const len = 0.17;
+    const flare = 0.085;
+    const sway = Math.max(-0.035, Math.min(0.035, off * 0.6));
+    const hemL = { x: L.hip.x + dx * len - hx * flare + sway, y: L.hip.y + dy * len - hy * flare };
+    const hemR = { x: Rt.hip.x + dx * len + hx * flare + sway, y: Rt.hip.y + dy * len + hy * flare };
+    c.moveTo(L.hip.x, L.hip.y);
+    c.lineTo(Rt.hip.x, Rt.hip.y);
+    c.moveTo(L.hip.x, L.hip.y);
+    c.quadraticCurveTo(L.hip.x - hx * flare * 0.3 + sway * 0.5, (L.hip.y + hemL.y) / 2, hemL.x, hemL.y);
+    c.moveTo(Rt.hip.x, Rt.hip.y);
+    c.quadraticCurveTo(Rt.hip.x + hx * flare * 0.3 + sway * 0.5, (Rt.hip.y + hemR.y) / 2, hemR.x, hemR.y);
+    // banguotas apačios kraštas
+    c.moveTo(hemL.x, hemL.y);
+    const waves = 4;
+    for (let i = 0; i < waves; i++) {
+      const a = lerp(hemL, hemR, i / waves);
+      const b = lerp(hemL, hemR, (i + 1) / waves);
+      c.quadraticCurveTo((a.x + b.x) / 2 + dx * 0.024, (a.y + b.y) / 2 + dy * 0.024, b.x, b.y);
+    }
+
+    // kaklas ir rankos
+    c.moveTo(J.chest.x, J.chest.y);
+    c.lineTo(J.neck.x, J.neck.y);
+    c.moveTo(J.shL.x, J.shL.y);
+    c.lineTo(J.elL.x, J.elL.y);
+    c.lineTo(J.haL.x, J.haL.y);
+    c.moveTo(J.shR.x, J.shR.y);
+    c.lineTo(J.elR.x, J.elR.y);
+    c.lineTo(J.haR.x, J.haR.y);
+    // kojos – matomos iš po sijonėlio
+    for (const [hp, hip, kn, ft, toe] of [
+      [J.hipL, L.hip, J.knL, J.ftL, J.toeL],
+      [J.hipR, Rt.hip, J.knR, J.ftR, J.toeR],
+    ]) {
+      const top = lerp(hp, hip, 0.4);
+      const start = lerp(top, kn, Math.min(0.9, 0.12 / (Math.hypot(kn.x - top.x, kn.y - top.y) || 1)));
+      c.moveTo(start.x, start.y);
+      c.lineTo(kn.x, kn.y);
+      c.lineTo(ft.x, ft.y);
+      c.lineTo(toe.x, toe.y);
+    }
+    // galva ir plaukai
     c.moveTo(J.headC.x + R, J.headC.y);
     c.arc(J.headC.x, J.headC.y, R, 0, TAU);
     if (hair) traceHair(c, J, R, hair.style, hair.off);
