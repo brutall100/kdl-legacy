@@ -188,7 +188,7 @@
   /* ------------------------------------------------------------------ */
 
   // Kūno proporcijos (figūros aukščio dalimis).
-  const BODY = {
+  const ADULT = {
     torso: 0.27,
     neck: 0.03,
     head: 0.062,
@@ -199,6 +199,20 @@
     legU: 0.235,
     legL: 0.235,
     foot: 0.055,
+  };
+
+  // Vaiko proporcijos: didesnė galva, trumpesnės galūnės, siauresni pečiai.
+  const CHILD = {
+    torso: 0.245,
+    neck: 0.022,
+    head: 0.088,
+    shoulder: 0.082,
+    hip: 0.05,
+    armU: 0.13,
+    armL: 0.12,
+    legU: 0.205,
+    legL: 0.205,
+    foot: 0.05,
   };
 
   /*
@@ -256,7 +270,7 @@
   }
 
   /** Iš pozos apskaičiuoja sąnarių koordinates (pėdos ant y = 0, aukštyn – neigiama). */
-  function solve(p) {
+  function solve(p, BODY = ADULT) {
     const sp = p[0] * D2R;
     const up = { x: Math.sin(sp), y: -Math.cos(sp) };
     const rt = { x: Math.cos(sp), y: Math.sin(sp) };
@@ -334,6 +348,8 @@
       this.flip = flip;
       this.beat = 60 / bpm;
       this.trails = { haL: [], haR: [], ftL: [], ftR: [] };
+      this.body = ADULT;
+      this.trailLen = 16;
     }
 
     poseAt(t) {
@@ -369,7 +385,7 @@
      * @param {boolean} still nejudantis kadras (be pėdsakų)
      */
     draw(c, t, x, gy, H, alpha, still) {
-      const J = solve(this.poseAt(t));
+      const J = solve(this.poseAt(t), this.body);
       const lw = Math.max(2.2, H * 0.0125);
 
       // šviesos dėmė ant grindų
@@ -396,7 +412,7 @@
         for (const key in this.trails) {
           const tr = this.trails[key];
           tr.push({ x: J[key].x, y: J[key].y });
-          if (tr.length > 16) tr.shift();
+          if (tr.length > this.trailLen) tr.shift();
           for (let i = 1; i < tr.length; i++) {
             const k = i / tr.length;
             c.strokeStyle = `rgba(${PINK}, ${k * k * 0.42 * alpha})`;
@@ -414,26 +430,62 @@
       c.shadowBlur = lw * 5.5;
       c.strokeStyle = `rgba(${PINK}, ${alpha})`;
       c.lineWidth = lw / H;
-      tracePath(c, J, BODY.head);
+      tracePath(c, J, this.body.head);
       c.stroke();
       c.shadowBlur = lw * 1.5;
       c.stroke();
       c.shadowBlur = 0;
       c.strokeStyle = `rgba(255, 224, 240, ${0.92 * alpha})`;
       c.lineWidth = (lw * 0.36) / H;
-      tracePath(c, J, BODY.head);
+      tracePath(c, J, this.body.head);
       c.stroke();
       c.restore();
+    }
+  }
+
+  /**
+   * Vaikas, kuris bando atkartoti pagrindinio šokėjo judesius:
+   * šiek tiek vėluoja, judesiai mažesni ir ne visai tikslūs, kartais pastrykčioja.
+   */
+  class Kid extends Dancer {
+    constructor({ leader, lag, accuracy, seed }) {
+      super({ routine: 0, offset: 0, flip: false, bpm: 104 });
+      this.leader = leader;
+      this.lag = lag; // kiek taktų vėluoja
+      this.accuracy = accuracy; // 1 = tiksliai kaip suaugęs
+      this.seed = seed;
+      this.body = CHILD;
+      this.trailLen = 10;
+    }
+
+    poseAt(t) {
+      const beat = this.leader.beat;
+      // Vėlavimas „plaukia“ – kartais pasiveja, kartais atsilieka.
+      const lag = this.lag + 0.14 * Math.sin(t * 0.37 + this.seed * 3.1);
+      const p = this.leader.poseAt(t - lag * beat);
+      const idle = POSES.idle;
+      for (let i = 0; i < 10; i++) {
+        // Mažesnė judesio amplitudė (vaikas dar ne viską pasiekia)…
+        p[i] = idle[i] + (p[i] - idle[i]) * this.accuracy;
+        // …ir šiek tiek „netvarkingi“ rankų / kojų kampai.
+        p[i] += Math.sin(t * (2.1 + i * 0.37) + this.seed * (i + 1)) * (i >= 2 && i <= 5 ? 6 : 2.5);
+      }
+      // Iš džiaugsmo pastrykčioja.
+      const hop = Math.sin((t / beat) * Math.PI + this.seed);
+      p[10] += Math.max(0, hop) * 0.035;
+      p[0] += Math.sin(t * 1.3 + this.seed) * 3;
+      return p;
     }
   }
 
   function initDancers(canvas) {
     const ctx = canvas.getContext('2d');
     let size = fitCanvas(canvas, 2);
+    const lead = new Dancer({ routine: 0, offset: 0, flip: false, bpm: 104 });
     const crew = [
-      new Dancer({ routine: 1, offset: 5, flip: true, bpm: 104 }),
-      new Dancer({ routine: 1, offset: 13, flip: false, bpm: 104 }),
-      new Dancer({ routine: 0, offset: 0, flip: false, bpm: 104 }),
+      new Kid({ leader: lead, lag: 0.32, accuracy: 0.78, seed: 1.7 }),
+      new Kid({ leader: lead, lag: 0.5, accuracy: 0.68, seed: 4.2 }),
+      lead,
     ];
 
     function layout() {
@@ -445,14 +497,22 @@
         const gy = Math.max(h * 0.3, top - 18);
         const H = Math.min(gy - 96, w * 0.62);
         if (H < 110) return [null, null, null];
-        return [null, null, { x: w * 0.7, gy, H, alpha: 0.85 }];
+        const x = w * 0.66;
+        const kidH = H * 0.56;
+        return [
+          { x: x - H * 0.5, gy: gy + 4, H: kidH, alpha: 0.8 },
+          { x: Math.min(w - kidH * 0.32, x + H * 0.52), gy: gy + 4, H: kidH * 0.92, alpha: 0.8 },
+          { x, gy, H, alpha: 0.85 },
+        ];
       }
-      const H = Math.min(h * 0.7, w * 0.42);
-      const gy = h * 0.9;
+      // Kompiuteryje: suaugęs šokėjas, o abipus jo – du mažesni vaikai.
+      const H = Math.min(h * 0.66, w * 0.38);
+      const gy = h * 0.88;
+      const x = w * 0.74;
       return [
-        { x: w * 0.565, gy: gy - H * 0.1, H: H * 0.56, alpha: 0.34 },
-        { x: w * 0.925, gy: gy - H * 0.12, H: H * 0.52, alpha: 0.28 },
-        { x: w * 0.755, gy, H, alpha: 1 },
+        { x: x - H * 0.52, gy: gy + H * 0.04, H: H * 0.58, alpha: 0.92 },
+        { x: Math.min(w - H * 0.2, x + H * 0.54), gy: gy + H * 0.05, H: H * 0.52, alpha: 0.88 },
+        { x, gy, H, alpha: 1 },
       ];
     }
 
