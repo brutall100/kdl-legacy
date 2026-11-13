@@ -188,12 +188,14 @@
   /* ------------------------------------------------------------------ */
 
   // Kūno proporcijos (figūros aukščio dalimis).
+  // Moters proporcijos: siauresni pečiai, platesni klubai, ryškesnis liemuo.
   const ADULT = {
     torso: 0.27,
-    neck: 0.03,
-    head: 0.062,
-    shoulder: 0.098,
-    hip: 0.056,
+    neck: 0.032,
+    head: 0.058,
+    shoulder: 0.084,
+    hip: 0.068,
+    waist: 0.78,
     armU: 0.145,
     armL: 0.14,
     legU: 0.235,
@@ -213,6 +215,7 @@
     legU: 0.205,
     legL: 0.205,
     foot: 0.05,
+    waist: 0.6,
   };
 
   /*
@@ -306,11 +309,13 @@
     return J;
   }
 
-  function tracePath(c, J, R) {
+  function tracePath(c, J, body, hair) {
+    const R = body.head;
+    const pinch = body.waist || 0.55;
     // liemuo – kontūras su įlinkiu ties juosmeniu
     const waist = (sh, hp) => ({
-      x: sh.x * 0.3 + hp.x * 0.7 + (J.hipC.x * 0.6 + J.chest.x * 0.4 - (sh.x * 0.3 + hp.x * 0.7)) * 0.55,
-      y: sh.y * 0.3 + hp.y * 0.7 + (J.hipC.y * 0.6 + J.chest.y * 0.4 - (sh.y * 0.3 + hp.y * 0.7)) * 0.55,
+      x: sh.x * 0.42 + hp.x * 0.58 + (J.hipC.x * 0.6 + J.chest.x * 0.4 - (sh.x * 0.42 + hp.x * 0.58)) * pinch,
+      y: sh.y * 0.42 + hp.y * 0.58 + (J.hipC.y * 0.6 + J.chest.y * 0.4 - (sh.y * 0.42 + hp.y * 0.58)) * pinch,
     });
     const wL = waist(J.shL, J.hipL);
     const wR = waist(J.shR, J.hipR);
@@ -339,6 +344,57 @@
     c.lineTo(J.toeR.x, J.toeR.y);
     c.moveTo(J.headC.x + R, J.headC.y);
     c.arc(J.headC.x, J.headC.y, R, 0, TAU);
+    if (hair) traceHair(c, J, R, hair.style, hair.off);
+  }
+
+  /**
+   * Plaukai. `off` – siūbavimas (kūno vienetais), kad plaukai „vėluotų“ už galvos judesio.
+   * Stiliai: long (ilgi palaidi), ponytail (uodegėlė), pigtails (dvi kasytės).
+   */
+  function traceHair(c, J, R, style, off) {
+    const h = J.headC;
+    // galvos „aukštyn“ kryptis (pagal kaklą) ir „dešinėn“
+    let ux = h.x - J.neck.x;
+    let uy = h.y - J.neck.y;
+    const ul = Math.hypot(ux, uy) || 1;
+    ux /= ul;
+    uy /= ul;
+    const rx = -uy;
+    const ry = ux;
+    const at = (a, b) => ({ x: h.x + rx * a * R + ux * b * R, y: h.y + ry * a * R + uy * b * R });
+
+    if (style === 'long') {
+      // dvi išorinės sruogos nuo viršugalvio iki žemiau pečių + dvi vidinės
+      for (const side of [-1, 1]) {
+        const top = at(side * 0.25, 1.0);
+        const c1 = at(side * 1.55, 0.7);
+        const c2 = { x: h.x + side * R * 1.5 + off * 0.6, y: h.y + R * 1.9 };
+        const tip = { x: h.x + side * R * 1.05 + off, y: h.y + R * 3.6 };
+        c.moveTo(top.x, top.y);
+        c.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, tip.x, tip.y);
+        const s0 = at(side * 0.85, 0.2);
+        const tip2 = { x: h.x + side * R * 0.95 + off * 0.8, y: h.y + R * 2.9 };
+        c.moveTo(s0.x, s0.y);
+        c.quadraticCurveTo(h.x + side * R * 1.15 + off * 0.3, h.y + R * 1.6, tip2.x, tip2.y);
+      }
+    } else if (style === 'ponytail') {
+      // gumytė viršugalvyje ir uodegėlė, kuri švytruoja
+      const base = at(0.55, 0.85);
+      const c1 = { x: base.x + R * 1.3 + off * 0.5, y: base.y - R * 0.2 };
+      const tip = { x: base.x + R * 1.35 + off * 1.4, y: base.y + R * 1.9 };
+      c.moveTo(base.x, base.y);
+      c.quadraticCurveTo(c1.x, c1.y, tip.x, tip.y);
+      c.moveTo(base.x + R * 0.05, base.y + R * 0.08);
+      c.quadraticCurveTo(c1.x - R * 0.25, c1.y + R * 0.4, tip.x - R * 0.35, tip.y - R * 0.25);
+    } else if (style === 'pigtails') {
+      for (const side of [-1, 1]) {
+        const base = at(side * 0.95, 0.35);
+        const c1 = { x: base.x + side * R * 0.9 + off * 0.4, y: base.y + R * 0.1 };
+        const tip = { x: base.x + side * R * 0.75 + off, y: base.y + R * 1.5 };
+        c.moveTo(base.x, base.y);
+        c.quadraticCurveTo(c1.x, c1.y, tip.x, tip.y);
+      }
+    }
   }
 
   class Dancer {
@@ -350,6 +406,24 @@
       this.trails = { haL: [], haR: [], ftL: [], ftR: [] };
       this.body = ADULT;
       this.trailLen = 16;
+      this.hairStyle = 'long';
+      this.hair = { off: 0, vel: 0, lastX: null };
+    }
+
+    /** Plaukų siūbavimas: spyruoklė, kuri seka galvos judesį su vėlavimu. */
+    hairOffset(J, t, still) {
+      const hs = this.hair;
+      if (still) {
+        hs.lastX = null;
+        return 0;
+      }
+      const x = J.headC.x;
+      const dx = hs.lastX == null ? 0 : x - hs.lastX;
+      hs.lastX = x;
+      const target = Math.max(-0.07, Math.min(0.07, -dx * 9)) + Math.sin(t * 2.4) * 0.006;
+      hs.vel = (hs.vel + (target - hs.off) * 0.18) * 0.8;
+      hs.off += hs.vel;
+      return hs.off;
     }
 
     poseAt(t) {
@@ -387,6 +461,7 @@
     draw(c, t, x, gy, H, alpha, still) {
       const J = solve(this.poseAt(t), this.body);
       const lw = Math.max(2.2, H * 0.0125);
+      const hairInfo = this.hairStyle ? { style: this.hairStyle, off: this.hairOffset(J, t, still) } : null;
 
       // šviesos dėmė ant grindų
       c.save();
@@ -430,14 +505,14 @@
       c.shadowBlur = lw * 5.5;
       c.strokeStyle = `rgba(${PINK}, ${alpha})`;
       c.lineWidth = lw / H;
-      tracePath(c, J, this.body.head);
+      tracePath(c, J, this.body, hairInfo);
       c.stroke();
       c.shadowBlur = lw * 1.5;
       c.stroke();
       c.shadowBlur = 0;
       c.strokeStyle = `rgba(255, 224, 240, ${0.92 * alpha})`;
       c.lineWidth = (lw * 0.36) / H;
-      tracePath(c, J, this.body.head);
+      tracePath(c, J, this.body, hairInfo);
       c.stroke();
       c.restore();
     }
@@ -448,7 +523,7 @@
    * šiek tiek vėluoja, judesiai mažesni ir ne visai tikslūs, kartais pastrykčioja.
    */
   class Kid extends Dancer {
-    constructor({ leader, lag, accuracy, seed }) {
+    constructor({ leader, lag, accuracy, seed, hairStyle }) {
       super({ routine: 0, offset: 0, flip: false, bpm: 104 });
       this.leader = leader;
       this.lag = lag; // kiek taktų vėluoja
@@ -456,6 +531,7 @@
       this.seed = seed;
       this.body = CHILD;
       this.trailLen = 10;
+      this.hairStyle = hairStyle;
     }
 
     poseAt(t) {
@@ -483,8 +559,8 @@
     let size = fitCanvas(canvas, 2);
     const lead = new Dancer({ routine: 0, offset: 0, flip: false, bpm: 104 });
     const crew = [
-      new Kid({ leader: lead, lag: 0.32, accuracy: 0.78, seed: 1.7 }),
-      new Kid({ leader: lead, lag: 0.5, accuracy: 0.68, seed: 4.2 }),
+      new Kid({ leader: lead, lag: 0.32, accuracy: 0.78, seed: 1.7, hairStyle: 'ponytail' }),
+      new Kid({ leader: lead, lag: 0.5, accuracy: 0.68, seed: 4.2, hairStyle: 'pigtails' }),
       lead,
     ];
 
