@@ -42,17 +42,17 @@
 }
 
 :root {
-  --bg: #0b0a0e;
-  --panel: #131118;
-  --panel-2: #1a1720;
+  --bg: #080c1c;
+  --panel: #0f1630;
+  --panel-2: #162040;
   --line: rgba(255, 255, 255, 0.1);
   --line-2: rgba(255, 255, 255, 0.18);
-  --pink: #ff2e93;
-  --pink-dim: rgba(255, 46, 147, 0.14);
+  --pink: #4d8dff;
+  --pink-dim: rgba(77, 141, 255, 0.14);
   --text: #f5f3f7;
   --muted: rgba(255, 255, 255, 0.62);
   --ink: #0a080c;
-  --ok: #ff2e93;
+  --ok: #4d8dff;
   --danger: #ff6b6b;
   --radius: 16px;
   --side-w: 264px;
@@ -327,8 +327,8 @@ button {
   overflow: hidden;
 }
 .card--notice {
-  border-color: rgba(255, 46, 147, 0.5);
-  background: linear-gradient(135deg, rgba(255, 46, 147, 0.13), transparent 60%), var(--panel);
+  border-color: rgba(77, 141, 255, 0.5);
+  background: linear-gradient(135deg, rgba(77, 141, 255, 0.13), transparent 60%), var(--panel);
   margin-bottom: 1rem;
 }
 .card--notice .muted {
@@ -386,7 +386,7 @@ button {
   color: var(--ink);
 }
 .btn--primary:hover {
-  box-shadow: 0 0 22px rgba(255, 46, 147, 0.5);
+  box-shadow: 0 0 22px rgba(77, 141, 255, 0.5);
   transform: translateY(-1px);
 }
 .btn--ghost {
@@ -453,7 +453,7 @@ button {
 }
 .flash--ok {
   background: var(--pink-dim);
-  border: 1px solid rgba(255, 46, 147, 0.55);
+  border: 1px solid rgba(77, 141, 255, 0.55);
 }
 .flash--ok .ico {
   color: var(--pink);
@@ -902,7 +902,7 @@ form > .card + .card {
 .input:focus {
   outline: none;
   border-color: var(--pink);
-  box-shadow: 0 0 0 4px rgba(255, 46, 147, 0.18);
+  box-shadow: 0 0 0 4px rgba(77, 141, 255, 0.18);
 }
 .input--sm {
   width: auto;
@@ -1132,7 +1132,7 @@ select.input {
   margin-top: 0;
 }
 .inq--new {
-  border-color: rgba(255, 46, 147, 0.55);
+  border-color: rgba(77, 141, 255, 0.55);
 }
 .inq--done {
   opacity: 0.7;
@@ -1203,8 +1203,8 @@ select.input {
   place-items: center;
   padding: 1.5rem;
   background:
-    radial-gradient(60% 50% at 80% 10%, rgba(255, 46, 147, 0.25), transparent 70%),
-    radial-gradient(50% 40% at 10% 100%, rgba(255, 46, 147, 0.16), transparent 70%), var(--bg);
+    radial-gradient(60% 50% at 80% 10%, rgba(77, 141, 255, 0.25), transparent 70%),
+    radial-gradient(50% 40% at 10% 100%, rgba(77, 141, 255, 0.16), transparent 70%), var(--bg);
 }
 .auth__card {
   width: min(100%, 400px);
@@ -1258,6 +1258,6 @@ select.input {
 }
 
 .alert--info {
-  background: var(--accent-dim, rgba(255, 46, 147, 0.14));
-  border: 1px solid rgba(255, 46, 147, 0.5);
+  background: var(--accent-dim, rgba(77, 141, 255, 0.14));
+  border: 1px solid rgba(77, 141, 255, 0.5);
 }

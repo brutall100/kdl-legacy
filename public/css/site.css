@@ -55,18 +55,18 @@
 
 /* ---------- Kintamieji ---------- */
 :root {
-  --bg: #07060a;
-  --bg-2: #0e0c12;
-  --bg-3: #17141c;
-  --pink: #ff2e93;
-  --pink-soft: #ff6bb3;
-  --pink-glow: rgba(255, 46, 147, 0.55);
-  --pink-dim: rgba(255, 46, 147, 0.12);
+  --bg: #070b1a;
+  --bg-2: #0d1430;
+  --bg-3: #141d42;
+  --pink: #4d8dff;
+  --pink-soft: #a9c8ff;
+  --pink-glow: rgba(77, 141, 255, 0.55);
+  --pink-dim: rgba(77, 141, 255, 0.12);
   --text: #ffffff;
   --muted: rgba(255, 255, 255, 0.68);
   --faint: rgba(255, 255, 255, 0.4);
   --line: rgba(255, 255, 255, 0.11);
-  --ink: #0a080c; /* tekstas ant rožinės */
+  --ink: #0a080c; /* tekstas ant akcento spalvos */
 
   --font-display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
   --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -77,7 +77,7 @@
   --header-h: 76px;
   --radius: 22px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --neon: 0 0 0.08em #fff3, 0 0 0.35em var(--pink-glow), 0 0 1.1em rgba(255, 46, 147, 0.38);
+  --neon: 0 0 0.08em #fff3, 0 0 0.35em var(--pink-glow), 0 0 1.1em rgba(77, 141, 255, 0.38);
 }
 
 /* ---------- Pagrindas ---------- */
@@ -413,7 +413,7 @@ main {
 .btn--primary {
   background: var(--pink);
   color: var(--ink);
-  box-shadow: 0 0 0 rgba(255, 46, 147, 0);
+  box-shadow: 0 0 0 rgba(77, 141, 255, 0);
 }
 .btn--primary:hover {
   transform: translateY(-2px);
@@ -508,8 +508,8 @@ main {
 .demo-bar {
   z-index: 3;
   padding: 0.5rem var(--gutter);
-  background: #1a0b13;
-  border-bottom: 1px solid rgba(255, 46, 147, 0.35);
+  background: #0d1430;
+  border-bottom: 1px solid rgba(77, 141, 255, 0.35);
   color: var(--pink-soft);
   font-size: 0.8rem;
   font-weight: 600;
@@ -531,7 +531,7 @@ main {
 }
 .site-header.is-scrolled,
 .is-sub .site-header {
-  background: rgba(7, 6, 10, 0.78);
+  background: rgba(7, 11, 26, 0.78);
   -webkit-backdrop-filter: blur(16px) saturate(1.3);
   backdrop-filter: blur(16px) saturate(1.3);
   border-bottom-color: var(--line);
@@ -714,8 +714,8 @@ main {
     gap: 2rem;
     padding: calc(var(--header-h) + 1.5rem) var(--gutter) 2.5rem;
     background:
-      radial-gradient(120% 70% at 100% 0%, rgba(255, 46, 147, 0.22), transparent 60%),
-      rgba(7, 6, 10, 0.985);
+      radial-gradient(120% 70% at 100% 0%, rgba(77, 141, 255, 0.22), transparent 60%),
+      rgba(7, 11, 26, 0.985);
     opacity: 0;
     visibility: hidden;
     transition:
@@ -788,8 +788,8 @@ main {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(70% 60% at 78% 62%, rgba(255, 46, 147, 0.2), transparent 70%),
-    radial-gradient(50% 45% at 8% 100%, rgba(255, 46, 147, 0.14), transparent 70%);
+    radial-gradient(70% 60% at 78% 62%, rgba(77, 141, 255, 0.2), transparent 70%),
+    radial-gradient(50% 45% at 8% 100%, rgba(77, 141, 255, 0.14), transparent 70%);
 }
 .hero__video {
   position: absolute;
@@ -804,7 +804,7 @@ main {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(255, 46, 147, 0.5), rgba(255, 46, 147, 0.15));
+  background: linear-gradient(120deg, rgba(77, 141, 255, 0.5), rgba(77, 141, 255, 0.15));
   mix-blend-mode: multiply;
 }
 /* Nupiešta neoninė gatvė už šokėjų (vietą nustato fx.js) */
@@ -829,56 +829,56 @@ main {
 }
 .hero__street * {
   fill: none;
-  stroke: rgba(var(--accent-rgb, 255, 46, 147), 0.55);
+  stroke: rgba(77, 141, 255, 0.55);
   stroke-width: 1.4;
   vector-effect: non-scaling-stroke;
 }
 .hero__street .b {
-  stroke: rgba(255, 46, 147, 0.42);
+  stroke: rgba(77, 141, 255, 0.42);
   stroke-width: 1.5;
-  fill: rgba(7, 6, 10, 0.7);
+  fill: rgba(7, 11, 26, 0.7);
 }
 .hero__street .w {
-  stroke: rgba(255, 46, 147, 0.1);
+  stroke: rgba(77, 141, 255, 0.1);
 }
 .hero__street .wl {
-  stroke: rgba(255, 120, 190, 0.3);
-  fill: rgba(255, 46, 147, 0.14);
+  stroke: rgba(169, 200, 255, 0.3);
+  fill: rgba(77, 141, 255, 0.14);
 }
 .hero__street .t {
-  stroke: rgba(255, 46, 147, 0.35);
+  stroke: rgba(77, 141, 255, 0.35);
 }
 .hero__street .curb {
-  stroke: rgba(255, 46, 147, 0.7);
+  stroke: rgba(77, 141, 255, 0.7);
   stroke-width: 2;
-  filter: drop-shadow(0 0 6px rgba(255, 46, 147, 0.8));
+  filter: drop-shadow(0 0 6px rgba(77, 141, 255, 0.8));
 }
 .hero__street .dash {
-  stroke: rgba(255, 46, 147, 0.35);
+  stroke: rgba(77, 141, 255, 0.35);
   stroke-width: 3;
   stroke-dasharray: 60 40;
 }
 .hero__street .pole {
-  stroke: rgba(255, 46, 147, 0.6);
+  stroke: rgba(77, 141, 255, 0.6);
   stroke-width: 2.2;
 }
 .hero__street .lamp {
-  fill: #ffd6ea;
+  fill: #a9c8ff;
   stroke: none;
-  filter: drop-shadow(0 0 8px #ff2e93);
+  filter: drop-shadow(0 0 8px #4d8dff);
 }
 .hero__street .lampglow {
-  fill: rgba(255, 46, 147, 0.12);
+  fill: rgba(77, 141, 255, 0.12);
   stroke: none;
   filter: blur(12px);
 }
 .hero__street .brick {
-  stroke: rgba(255, 46, 147, 0.13);
+  stroke: rgba(77, 141, 255, 0.13);
 }
 .hero__street .graffiti {
   font-family: var(--font-script);
   font-size: 92px;
-  stroke: rgba(255, 46, 147, 0.35);
+  stroke: rgba(77, 141, 255, 0.35);
   stroke-width: 1.6;
 }
 @media (max-width: 860px) {
@@ -901,7 +901,7 @@ main {
   top: -12%;
   width: 46vmax;
   height: 135%;
-  background: linear-gradient(to bottom, rgba(255, 46, 147, 0.42), rgba(255, 46, 147, 0.08) 60%, transparent 82%);
+  background: linear-gradient(to bottom, rgba(77, 141, 255, 0.42), rgba(77, 141, 255, 0.08) 60%, transparent 82%);
   clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
   filter: blur(26px);
   transform-origin: 50% 0;
@@ -940,8 +940,8 @@ main {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(7, 6, 10, 0.9) 0%, rgba(7, 6, 10, 0.55) 38%, rgba(7, 6, 10, 0) 66%),
-    linear-gradient(to top, var(--bg) 0%, rgba(7, 6, 10, 0) 22%);
+    linear-gradient(90deg, rgba(7, 11, 26, 0.9) 0%, rgba(7, 11, 26, 0.55) 38%, rgba(7, 11, 26, 0) 66%),
+    linear-gradient(to top, var(--bg) 0%, rgba(7, 11, 26, 0) 22%);
 }
 .hero__inner {
   position: relative;
@@ -973,8 +973,8 @@ main {
 .hero__logo {
   width: min(100%, clamp(300px, 52vw, 800px));
   margin-left: -0.6%;
-  --kd-glow: drop-shadow(0 0 22px rgba(255, 46, 147, 0.55));
-  filter: drop-shadow(0 0 40px rgba(255, 46, 147, 0.18));
+  --kd-glow: drop-shadow(0 0 22px rgba(77, 141, 255, 0.55));
+  filter: drop-shadow(0 0 40px rgba(77, 141, 255, 0.18));
   animation: logoIn 1.1s var(--ease) both;
 }
 .hero__logo--img {
@@ -1073,8 +1073,8 @@ main {
   }
   .hero__fade {
     background:
-      linear-gradient(to top, var(--bg) 2%, rgba(7, 6, 10, 0.82) 40%, rgba(7, 6, 10, 0.1) 78%),
-      linear-gradient(90deg, rgba(7, 6, 10, 0.5), transparent 70%);
+      linear-gradient(to top, var(--bg) 2%, rgba(7, 11, 26, 0.82) 40%, rgba(7, 11, 26, 0.1) 78%),
+      linear-gradient(90deg, rgba(7, 11, 26, 0.5), transparent 70%);
   }
   .hero__scroll {
     display: none;
@@ -1088,7 +1088,7 @@ main {
   overflow: hidden;
   transform: rotate(-1.4deg) scaleX(1.04);
   margin-block: -0.6rem 0;
-  box-shadow: 0 0 60px rgba(255, 46, 147, 0.35);
+  box-shadow: 0 0 60px rgba(77, 141, 255, 0.35);
 }
 .marquee__track {
   display: flex;
@@ -1310,8 +1310,8 @@ main {
   font-weight: 900;
   font-size: clamp(3.4rem, 7vw, 5.6rem);
   line-height: 0.85;
-  color: #121016;
-  -webkit-text-stroke: 3px rgba(255, 46, 147, 0.8);
+  color: #0d1430;
+  -webkit-text-stroke: 3px rgba(77, 141, 255, 0.8);
   paint-order: stroke fill;
   transition:
     color 0.3s 0.1s,
@@ -1519,7 +1519,7 @@ main {
   border-radius: var(--radius);
   overflow: hidden;
   background:
-    radial-gradient(90% 70% at 50% 110%, rgba(255, 46, 147, 0.5), transparent 70%),
+    radial-gradient(90% 70% at 50% 110%, rgba(77, 141, 255, 0.5), transparent 70%),
     linear-gradient(160deg, var(--bg-3), var(--bg-2));
   border: 1px solid var(--line);
 }
@@ -1602,7 +1602,7 @@ main {
 }
 .price:hover {
   transform: translateY(-5px);
-  border-color: rgba(255, 46, 147, 0.7);
+  border-color: rgba(77, 141, 255, 0.7);
 }
 .price--hot {
   background: var(--pink);
@@ -1795,7 +1795,7 @@ main {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(80% 90% at 100% 100%, rgba(255, 46, 147, 0.55), transparent 65%),
+    radial-gradient(80% 90% at 100% 100%, rgba(77, 141, 255, 0.55), transparent 65%),
     repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 14px),
     var(--bg-2);
 }
@@ -1803,7 +1803,7 @@ main {
   width: 68%;
   --kd-letters: rgba(255, 255, 255, 0.55);
   --kd-text: rgba(255, 255, 255, 0.55);
-  --kd-dancer: rgba(255, 46, 147, 0.7);
+  --kd-dancer: rgba(77, 141, 255, 0.7);
   transition:
     transform 0.6s var(--ease),
     filter 0.4s;
@@ -1813,7 +1813,7 @@ main {
   --kd-letters: #fff;
   --kd-text: #fff;
   --kd-dancer: var(--pink);
-  filter: drop-shadow(0 0 18px rgba(255, 46, 147, 0.45));
+  filter: drop-shadow(0 0 18px rgba(77, 141, 255, 0.45));
 }
 .news-card__body {
   padding-top: 1.2rem;
@@ -1940,9 +1940,9 @@ main {
   background: linear-gradient(
     45deg,
     transparent 40%,
-    rgba(255, 46, 147, 0.3) 46%,
-    rgba(255, 214, 236, 0.6) 50%,
-    rgba(255, 46, 147, 0.3) 54%,
+    rgba(77, 141, 255, 0.3) 46%,
+    rgba(169, 200, 255, 0.6) 50%,
+    rgba(77, 141, 255, 0.3) 54%,
     transparent 60%
   );
   background-size: 300% 300%;
@@ -1965,8 +1965,8 @@ main {
     box-shadow 0.2s;
   /* rožinis „stiklo“ kraštas, šviesi viršutinė briauna ir švytėjimas */
   box-shadow:
-    inset 0 0 0 1.5px rgba(255, 46, 147, 0.75),
-    inset 0 1px 0 rgba(255, 214, 236, 0.6);
+    inset 0 0 0 1.5px rgba(77, 141, 255, 0.75),
+    inset 0 1px 0 rgba(169, 200, 255, 0.6);
 }
 /* švytėjimas aplink pačią nuotrauką (ne viduje, kad nenukirptų) */
 .gallery-item,
@@ -1980,7 +1980,7 @@ main {
 .news-card__media:hover,
 .trainer__photo:hover,
 .article__image:hover {
-  box-shadow: 0 0 28px -6px rgba(255, 46, 147, 0.7);
+  box-shadow: 0 0 28px -6px rgba(77, 141, 255, 0.7);
 }
 .article__image img {
   transition: transform 0.8s var(--ease);
@@ -2315,7 +2315,7 @@ main {
 }
 .field select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ff2e93' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234d8dff' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   padding-right: 2.6rem;
@@ -2333,8 +2333,8 @@ main {
 .field textarea:focus {
   outline: none;
   border-color: var(--pink);
-  background: rgba(255, 46, 147, 0.07);
-  box-shadow: 0 0 0 4px rgba(255, 46, 147, 0.18);
+  background: rgba(77, 141, 255, 0.07);
+  box-shadow: 0 0 0 4px rgba(77, 141, 255, 0.18);
 }
 .check {
   display: flex;
@@ -2538,7 +2538,7 @@ main {
   border-radius: calc(var(--radius) + 6px);
   overflow: hidden;
   background:
-    radial-gradient(60% 60% at 50% 45%, rgba(255, 46, 147, 0.3), transparent 70%),
+    radial-gradient(60% 60% at 50% 45%, rgba(77, 141, 255, 0.3), transparent 70%),
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
     var(--bg-2);
@@ -2615,8 +2615,8 @@ main {
   letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: #0a090d;
-  -webkit-text-stroke: 2px rgba(255, 46, 147, 0.55);
+  color: #0d1430;
+  -webkit-text-stroke: 2px rgba(77, 141, 255, 0.55);
   paint-order: stroke fill;
 }
 .site-footer__grid {
@@ -2698,7 +2698,7 @@ main {
 .page-head {
   position: relative;
   padding: calc(var(--header-h) + clamp(2.5rem, 7vw, 5rem)) 0 clamp(1.5rem, 4vw, 3rem);
-  background: radial-gradient(60% 120% at 100% 0%, rgba(255, 46, 147, 0.2), transparent 70%);
+  background: radial-gradient(60% 120% at 100% 0%, rgba(77, 141, 255, 0.2), transparent 70%);
   border-bottom: 1px solid var(--line);
 }
 .crumbs {

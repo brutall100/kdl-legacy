@@ -9,7 +9,7 @@
 
   const TAU = Math.PI * 2;
   const D2R = Math.PI / 180;
-  const PINK = '255, 46, 147';
+  const PINK = '77, 141, 255';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mod = (a, n) => ((a % n) + n) % n;
   const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -608,7 +608,7 @@
       c.shadowBlur = lw * 1.5;
       c.stroke();
       c.shadowBlur = 0;
-      c.strokeStyle = `rgba(255, 224, 240, ${0.92 * alpha})`;
+      c.strokeStyle = `rgba(220, 232, 255, ${0.92 * alpha})`;
       c.lineWidth = (lw * 0.36) / H;
       tracePath(c, J, this.body, hairInfo);
       c.stroke();
