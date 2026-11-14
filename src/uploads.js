@@ -5,6 +5,12 @@ const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 const sharp = require('sharp');
+
+// Taupus atminties naudojimas mažame serveryje (pvz. Render 512 MB):
+// be libvips talpyklos ir po vieną apdorojimo giją – nuotraukos apdorojamos šiek tiek lėčiau,
+// bet atminties užimtumas daug mažesnis ir stabilus.
+sharp.cache(false);
+sharp.concurrency(Number(process.env.SHARP_CONCURRENCY) || 1);
 const config = require('./config');
 
 const IMAGE_RE = /^[a-f0-9]{24}\.webp$/;

@@ -17,6 +17,8 @@ services:
         value: "22"
       - key: NODE_ENV
         value: production
+      - key: MALLOC_ARENA_MAX   # mažiau atminties fragmentacijos (glibc)
+        value: "2"
       - key: TRUST_PROXY
         value: "1"
       - key: SESSION_SECRET
