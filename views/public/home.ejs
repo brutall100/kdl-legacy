@@ -30,7 +30,10 @@
   </div>
 
   <div class="container hero__inner">
-    <p class="overline hero__overline"><span class="dot"></span><%= S('hero_overline') %></p>
+    <p class="overline hero__overline"><% if (s.hero_video) { %><button class="hero__sound" type="button" data-sound aria-pressed="false" aria-label="<%= t('hero.soundOn') %>" title="<%= t('hero.soundOn') %>" data-on="<%= t('hero.soundOff') %>" data-off="<%= t('hero.soundOn') %>">
+    <svg class="hero__sound-ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.500L12 5.500v13L7.500 14.500H4z"/><path class="w-on" d="M15.500 9a4 4 0 0 1 0 6M18 6.500a7.500 7.500 0 0 1 0 11"/><path class="w-off" d="m16 9.500 5 5M21 9.500l-5 5"/></svg>
+    <span data-sound-label><%= t('hero.soundOn') %></span>
+  </button><% } else { %><span class="dot"></span><% } %><%= S('hero_overline') %></p>
     <h1 class="hero__title">
       <% if (s.logo) { %>
         <img class="hero__logo hero__logo--img" src="<%= img(s.logo) %>" alt="<%= siteName %>">
@@ -46,13 +49,7 @@
     </div>
   </div>
 
-  <% if (s.hero_video) { %>
-  <button class="hero__sound" type="button" data-sound aria-pressed="false" aria-label="<%= t('hero.soundOn') %>" title="<%= t('hero.soundOn') %>" data-on="<%= t('hero.soundOff') %>" data-off="<%= t('hero.soundOn') %>">
-    <svg class="hero__sound-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.500L12 5.500v13L7.500 14.500H4z"/><path class="w-on" d="M15.500 9a4 4 0 0 1 0 6M18 6.500a7.500 7.500 0 0 1 0 11"/><path class="w-off" d="m16 9.500 5 5M21 9.500l-5 5"/></svg>
-    <span data-sound-label><%= t('hero.soundOn') %></span>
-  </button>
-  <% } %>
-  <a class="hero__scroll" href="#apie"><span class="hero__scroll-line" aria-hidden="true"></span><%= t('hero.scroll') %></a>
+<a class="hero__scroll" href="#apie"><span class="hero__scroll-line" aria-hidden="true"></span><%= t('hero.scroll') %></a>
 </section>
 
 <div class="marquee" aria-hidden="true">
