@@ -182,6 +182,18 @@ Saugykloje yra paruoštas [`render.yaml`](render.yaml).
 
 Nemokamo plano apribojimai: po 15 min. neveiklumo svetainė „užmiega“ (pirmas atidarymas ~30–60 s), o įkeltos nuotraukos ir pakeitimai **dingsta po perkrovimo** – tinka tik pasižiūrėti.
 
+### Tikra svetainė Render'e kliento vardu
+
+Paruoštas atskiras failas [`render.production.yaml`](render.production.yaml) (Starter planas 7 $/mėn. + 1 GB diskas).
+Bandomoji versija (`render.yaml`, nemokama) lieka atskirai.
+
+1. **Klientas:** užsiregistruoja <https://render.com> savo el. paštu → **Billing** → įveda kortelę.
+2. **Klientas:** **Workspace Settings → Members → Invite** → kūrėjo el. paštas, rolė **Admin**.
+3. **Kūrėjas:** priima kvietimą, viršuje kairėje persijungia į kliento darbo erdvę.
+4. **Kūrėjas:** **New → Blueprint** → saugykla `kdl-legacy` → **Blueprint Path**: `render.production.yaml`
+   → įveda `ADMIN_PASSWORD` (ir `SITE_URL`, jei domenas jau yra) → **Apply**.
+5. Domenas: paslaugoje **Settings → Custom Domains**, DNS įrašai – pas domeno registratorių.
+
 ### Tikra svetainė Render'e (mokamas planas su disku)
 
 Tą pačią bandomąją paslaugą galima paversti tikra svetaine – adresas ir nustatymai išlieka.

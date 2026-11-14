@@ -1,0 +1,34 @@
+# Render.com „Blueprint“ – TIKRA svetainė (mokamas planas su disku).
+# Naudojamas kliento Render darbo erdvėje: New → Blueprint → „Blueprint Path“: render.production.yaml
+# (render.yaml lieka nemokamai bandomajai versijai).
+services:
+  - type: web
+    name: kdlegacy-prod
+    runtime: node
+    plan: starter            # 7 $/mėn. (0,5 CPU, 512 MB RAM)
+    region: frankfurt
+    branch: main
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /robots.txt
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1              # ~0,25 $/mėn.; vėliau galima padidinti
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_DIR
+        value: /data
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD   # tik pirmam prisijungimui; vėliau keičiamas admin panelėje
+        sync: false
+      - key: SITE_URL         # pvz. https://www.kd-legacy.lt (galima įrašyti vėliau)
+        sync: false
