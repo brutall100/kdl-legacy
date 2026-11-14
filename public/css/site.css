@@ -1017,6 +1017,39 @@ main {
   gap: 0.9rem;
   margin-top: clamp(1.6rem, 3vw, 2.4rem);
 }
+.hero__sound {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 1.6rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1rem 0.6rem 0.8rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(7, 11, 26, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+.hero__sound:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+.hero__sound .w-on { display: none; }
+.hero__sound[aria-pressed='true'] .w-on { display: inline; }
+.hero__sound[aria-pressed='true'] .w-off { display: none; }
+.hero__sound[aria-pressed='true'] {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: var(--ink);
+}
 .hero__scroll {
   position: absolute;
   right: var(--gutter);
@@ -1058,6 +1091,20 @@ main {
     padding-bottom: 5rem;
     /* vieta šokėjams virš logotipo: meniu + užrašas + šokėjų zona */
     padding-top: calc(var(--header-h) + 2.6rem + clamp(200px, 34svh, 320px));
+  }
+  /* Su fono vaizdo įrašu šokėjų nėra – vietos jiems rezervuoti nereikia */
+  .hero--video {
+    padding-top: calc(var(--header-h) + 5rem);
+    min-height: 88svh;
+  }
+  .hero__sound {
+    bottom: auto;
+    left: auto;
+    left: var(--gutter);
+    right: auto;
+    top: calc(var(--header-h) + 3rem);
+    padding: 0.45rem 0.85rem 0.45rem 0.7rem;
+    font-size: 0.72rem;
   }
   /* Telefone viršutinė eilutė – pačiame viršuje, kad neuždengtų šokėjų */
   .hero__inner {

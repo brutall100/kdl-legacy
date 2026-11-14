@@ -90,7 +90,7 @@ npm run reset-password -- admin NaujasSlapt  # nustatys konkretų slaptažodį (
 
 **Nuotraukos** automatiškai pasukamos, sumažinamos (iki 2000 px), paverčiamos greitu WebP formatu, o iš jų pašalinami metaduomenys (pvz. GPS vieta). Tinka JPG, PNG, WebP, GIF, iki 20 MB.
 
-**Fono vaizdo įrašas** (Nustatymai → Pradinis ekranas): tinka MP4, MOV (iPhone), WebM ir kt. – svetainė pati fone paverčia jį į MP4 (H.264, iki 1280 px, iki 45 s, be garso), todėl jis groja visose naršyklėse, ir telefone. Konvertavimas trunka ~0,5–1 min. Svetainėje jis rodomas juodai-rožiniu (dviejų spalvų) stiliumi, kad derėtų prie dizaino. Pašalinus – vėl rodomi animuoti šokėjai.
+**Fono vaizdo įrašas** (Nustatymai → Pradinis ekranas): tinka MP4, MOV (iPhone), WebM ir kt. – svetainė pati fone paverčia jį į MP4 (H.264, iki 1280 px, iki 45 s, garsas išsaugomas – lankytojas jį įjungia garso mygtuku), todėl jis groja visose naršyklėse, ir telefone. Konvertavimas trunka ~0,5–1 min. Svetainėje jis rodomas juodai-rožiniu (dviejų spalvų) stiliumi, kad derėtų prie dizaino. Pašalinus – vėl rodomi animuoti šokėjai.
 
 **Logotipas.** Svetainė naudoja vektorinį KD Legacy logotipą (`public/img/logo.svg`). Jei įkelsite kitą logotipą Nustatymuose, jis bus rodomas vietoje esamo.
 

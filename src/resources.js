@@ -247,7 +247,7 @@ const settingsGroups = [
       { name: 'hero_tagline', label: 'Šūkis', type: 'text', i18n: true },
       { name: 'hero_text', label: 'Trumpas prisistatymas', type: 'textarea', i18n: true, rows: 3 },
       { name: 'logo', label: 'Logotipas (nebūtina)', type: 'image', help: 'Jei neįkelsite – bus rodomas tekstinis logotipas. Geriausia PNG permatomu fonu.' },
-      { name: 'hero_video', label: 'Fono vaizdo įrašas (nebūtina)', type: 'video', help: 'MP4, MOV (iPhone), WebM ir kt. – automatiškai paverčiamas į MP4: iki 45 s, be garso. Geriausia trumpas (10–30 s). Jei neįkeltas – rodomi animuoti neoniniai šokėjai.' },
+      { name: 'hero_video', label: 'Fono vaizdo įrašas (nebūtina)', type: 'video', help: 'MP4, MOV (iPhone), WebM ir kt. – automatiškai paverčiamas į MP4: iki 45 s. Garsas išsaugomas, bet svetainėje įsijungia tik lankytojui paspaudus garso mygtuką. Geriausia trumpas (10–30 s). Jei neįkeltas – rodomi animuoti neoniniai šokėjai.' },
     ],
   },
   {

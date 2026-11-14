@@ -48,6 +48,23 @@
     cleanUrl();
   }
 
+  /* ---------- Fono vaizdo įrašo garsas ---------- */
+  const heroVideo = $('#hero-video');
+  const soundBtn = $('[data-sound]');
+  if (heroVideo && soundBtn) {
+    const label = $('[data-sound-label]', soundBtn);
+    soundBtn.addEventListener('click', () => {
+      const on = heroVideo.muted;
+      heroVideo.muted = !on;
+      if (on) {
+        heroVideo.volume = 1;
+        heroVideo.play().catch(() => {});
+      }
+      soundBtn.setAttribute('aria-pressed', String(on));
+      label.textContent = on ? soundBtn.dataset.on : soundBtn.dataset.off;
+    });
+  }
+
   /* ---------- Antraštė ---------- */
   const header = $('[data-header]');
   if (header) {

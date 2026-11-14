@@ -17,7 +17,7 @@
 <section class="hero<%= s.hero_video ? ' hero--video' : '' %>" id="top">
   <div class="hero__bg" aria-hidden="true">
     <% if (s.hero_video) { %>
-      <video class="hero__video" src="<%= img(s.hero_video) %>" autoplay muted loop playsinline preload="metadata"></video>
+      <video class="hero__video" id="hero-video" src="<%= img(s.hero_video) %>" autoplay muted loop playsinline preload="metadata"></video>
     <% } %>
     <div class="hero__beam hero__beam--1"></div>
     <div class="hero__beam hero__beam--2"></div>
@@ -46,6 +46,12 @@
     </div>
   </div>
 
+  <% if (s.hero_video) { %>
+  <button class="hero__sound" type="button" data-sound aria-pressed="false" data-on="<%= t('hero.soundOff') %>" data-off="<%= t('hero.soundOn') %>">
+    <svg class="hero__sound-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.500L12 5.500v13L7.500 14.500H4z"/><path class="w-on" d="M15.500 9a4 4 0 0 1 0 6M18 6.500a7.500 7.500 0 0 1 0 11"/><path class="w-off" d="m16 9.500 5 5M21 9.500l-5 5"/></svg>
+    <span data-sound-label><%= t('hero.soundOn') %></span>
+  </button>
+  <% } %>
   <a class="hero__scroll" href="#apie"><span class="hero__scroll-line" aria-hidden="true"></span><%= t('hero.scroll') %></a>
 </section>
 

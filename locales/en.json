@@ -16,13 +16,10 @@
   "lang.switch": "Lietuvių",
   "lang.switchShort": "LT",
   "lang.current": "EN",
-
   "demo.banner": "This website is still being set up – some information (schedule, prices, events) is sample content.",
-
   "hero.cta": "Book a trial class",
   "hero.cta2": "Schedule",
   "hero.scroll": "Scroll down",
-
   "about.label": "About us",
   "about.pillar1.title": "Technique",
   "about.pillar1.text": "Strong foundations and steady progress in every single class.",
@@ -31,12 +28,10 @@
   "about.pillar3.title": "Stage",
   "about.pillar3.text": "Shows, concerts and events where dancers gain real stage experience.",
   "about.badge": "KD LEGACY · DANCE STUDIO · JONAVA · ",
-
   "classes.label": "Dance styles",
   "classes.title": "Find your",
   "classes.titleAccent": "style",
   "classes.cta": "I want to try",
-
   "schedule.label": "Schedule",
   "schedule.title": "Weekly",
   "schedule.titleAccent": "rhythm",
@@ -44,19 +39,32 @@
   "schedule.note": "The schedule may change during holidays and events – follow our news.",
   "schedule.trainer": "Trainer",
   "schedule.hall": "Hall",
-  "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-  "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-
+  "weekdays": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ],
+  "weekdaysShort": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
   "trainers.label": "Trainers",
   "trainers.title": "A team that",
   "trainers.titleAccent": "inspires",
-
   "prices.label": "Prices",
   "prices.title": "Choose your",
   "prices.titleAccent": "plan",
   "prices.popular": "Most popular",
   "prices.cta": "Sign up",
-
   "news.label": "News",
   "news.title": "What's",
   "news.titleAccent": "new",
@@ -65,7 +73,6 @@
   "news.empty": "No news yet.",
   "news.pageTitle": "News",
   "news.other": "More news",
-
   "events.label": "Events",
   "events.title": "Upcoming",
   "events.titleAccent": "events",
@@ -78,7 +85,6 @@
   "events.link": "More information",
   "events.when": "When",
   "events.where": "Where",
-
   "gallery.label": "Gallery",
   "gallery.title": "Moments",
   "gallery.titleAccent": "in motion",
@@ -88,15 +94,12 @@
   "gallery.open": "Open photo",
   "gallery.prev": "Previous",
   "gallery.next": "Next",
-
   "testimonials.label": "Testimonials",
   "testimonials.title": "What our",
   "testimonials.titleAccent": "dancers say",
-
   "faq.label": "FAQ",
   "faq.title": "Common",
   "faq.titleAccent": "questions",
-
   "register.label": "Sign up",
   "register.title": "Come",
   "register.titleAccent": "dance",
@@ -121,7 +124,6 @@
   "register.errConsent": "Your consent to data use is required.",
   "register.errRate": "Too many attempts. Please try again a little later.",
   "register.errGeneric": "Sending failed. Please try again or contact us directly.",
-
   "contacts.label": "Contact",
   "contacts.title": "Visit the",
   "contacts.titleAccent": "studio",
@@ -133,19 +135,19 @@
   "contacts.mapLoad": "Show map",
   "contacts.mapNote": "Clicking will load a Google Maps map.",
   "contacts.mapTitle": "Studio location on the map",
-
   "footer.tagline": "Dance studio in Jonava, Lithuania",
   "footer.rights": "All rights reserved.",
   "footer.privacy": "Privacy policy",
   "footer.madeBy": "Made by",
   "footer.top": "Back to top",
   "footer.nav": "Navigation",
-
   "privacy.title": "Privacy policy",
   "notFound.title": "Page not found",
   "notFound.text": "Looks like this step isn't part of our choreography.",
   "notFound.back": "Back to home",
   "error.title": "Something went wrong",
   "error.text": "Sorry – an error occurred. Please try again later.",
-  "back": "Back"
+  "back": "Back",
+  "hero.soundOn": "Sound on",
+  "hero.soundOff": "Sound off"
 }
