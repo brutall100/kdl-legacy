@@ -62,6 +62,8 @@
       }
       soundBtn.setAttribute('aria-pressed', String(on));
       label.textContent = on ? soundBtn.dataset.on : soundBtn.dataset.off;
+      soundBtn.setAttribute('aria-label', label.textContent);
+      soundBtn.title = label.textContent;
     });
   }
 
