@@ -240,12 +240,8 @@ main,
   margin-bottom: 1.1rem;
 }
 .label::before {
-  counter-increment: section;
-  content: counter(section, decimal-leading-zero);
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text);
+  /* skilčių numeriai (01, 02…) išjungti */
+  content: none;
 }
 .label::after {
   content: '';
