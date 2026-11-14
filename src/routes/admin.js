@@ -14,9 +14,13 @@ const { db, getSettings, setSettings } = require('../db');
 const { resources, columnsFor, settingsGroups, settingsFields, WEEKDAYS } = require('../resources');
 const SqliteStore = require('../session-store');
 const up = require('../uploads');
+const video = require('../video');
 const h = require('../helpers');
 
 const router = express.Router();
+
+// Jei serveris persikrovė konvertuojant vaizdo įrašą – laikinas failas dingo, pažymim klaidą.
+if (getSettings().hero_video_status === 'converting') setSettings({ hero_video_status: 'error' });
 
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 const STATUSES = { new: 'Nauja', contacted: 'Susisiekta', done: 'Užbaigta' };
@@ -257,9 +261,17 @@ async function readFields(fields, req, existing = {}) {
     if (f.type !== 'image' && f.type !== 'video') continue;
     for (const n of fieldNames(f)) {
       const file = files.find((x) => x.fieldname === n);
-      if (file) {
+      if (file && f.type === 'video') {
+        values[n] = existing[n] || '';
+        const res = startVideoConversion(n, file, existing[n]);
+        if (res.error) errors.push(res.error);
+        else if (res.saved) {
+          values[n] = res.saved;
+          if (existing[n]) stale.push(existing[n]);
+        } else values[`${n}_status`] = 'converting';
+      } else if (file) {
         try {
-          values[n] = f.type === 'video' ? up.saveVideo(file) : await up.saveImage(file.path);
+          values[n] = await up.saveImage(file.path);
           if (existing[n]) stale.push(existing[n]);
         } catch (err) {
           errors.push(`Nepavyko apdoroti failo „${file.originalname}“. Naudokite JPG, PNG arba WebP.`);
@@ -267,10 +279,43 @@ async function readFields(fields, req, existing = {}) {
       } else if (body[`${n}__remove`] && existing[n]) {
         stale.push(existing[n]);
         values[n] = '';
+        if (f.type === 'video') values[`${n}_status`] = '';
       }
     }
   }
   return { values, errors, stale };
+}
+
+/**
+ * Vaizdo įrašas konvertuojamas fone (į MP4), kad admin panelė nelauktų.
+ * Kol konvertuojama, svetainėje lieka senas įrašas; baigus – pakeičiamas naujuoju.
+ * @returns {{error?: string, saved?: string}} saved – kai konvertuoti nereikėjo (be ffmpeg)
+ */
+function startVideoConversion(key, file, oldName) {
+  if (!video.available) {
+    // be ffmpeg tinka tik naršyklėms suprantami formatai
+    try {
+      return { saved: up.saveVideo(file) };
+    } catch {
+      return { error: 'Šiame serveryje galima kelti tik MP4 arba WebM vaizdo įrašus.' };
+    }
+  }
+  if (video.isBusy()) return { error: 'Šiuo metu konvertuojamas kitas vaizdo įrašas. Pabandykite po minutės.' };
+  // laikiną failą perkeliam, kad jo neištrintų užklausos pabaigoje
+  const pending = path.join(up.TMP_DIR, `pending-${crypto.randomBytes(6).toString('hex')}`);
+  fs.renameSync(file.path, pending);
+  video
+    .convertToMp4(pending)
+    .then((name) => {
+      setSettings({ [key]: name, [`${key}_status`]: '' });
+      if (oldName) up.deleteVideo(oldName);
+    })
+    .catch((err) => {
+      console.error('[video]', err.message);
+      setSettings({ [`${key}_status`]: 'error' });
+    })
+    .finally(() => fs.rm(pending, { force: true }, () => {}));
+  return {};
 }
 
 function removeFiles(names) {

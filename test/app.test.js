@@ -232,3 +232,26 @@ test('admin: atsarginė kopija atsisiunčiama kaip ZIP', async () => {
   const anon = await fetch(base + '/admin/backup.zip', { redirect: 'manual' });
   assert.equal(anon.status, 302);
 });
+
+test('admin: .mov vaizdo įrašas konvertuojamas į MP4 fone', { skip: !require('../src/video').available }, async () => {
+  const { execFileSync } = require('child_process');
+  const ffmpeg = require('ffmpeg-static');
+  const mov = path.join(DATA_DIR, 'test.mov');
+  execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'testsrc2=size=640x360:rate=25', '-t', '2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-f', 'mov', mov]);
+  const req = await login();
+  const page = await (await req('/admin/settings')).text();
+  const csrf = decodeURIComponent(page.match(/_csrf=([^"&]+)/)[1]);
+  const fd = new FormData();
+  fd.append('site_name', 'KD Legacy');
+  fd.append('hero_video', new Blob([fs.readFileSync(mov)], { type: 'video/quicktime' }), 'telefonas.mov');
+  const res = await req(`/admin/settings?_csrf=${encodeURIComponent(csrf)}`, { method: 'POST', body: fd });
+  assert.equal(res.status, 302);
+  const get = () => Object.fromEntries(db.prepare('SELECT key, value FROM settings').all().map((r) => [r.key, r.value]));
+  for (let i = 0; i < 100 && get().hero_video_status === 'converting'; i++) await new Promise((r) => setTimeout(r, 200));
+  const s = get();
+  assert.equal(s.hero_video_status, '');
+  assert.match(s.hero_video, /^[a-f0-9]{24}\.mp4$/);
+  const vid = await fetch(`${base}/uploads/${s.hero_video}`);
+  assert.equal(vid.status, 200);
+  assert.match(vid.headers.get('content-type'), /video\/mp4/);
+});

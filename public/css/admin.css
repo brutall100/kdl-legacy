@@ -1256,3 +1256,8 @@ select.input {
 .facts dd {
   font-weight: 800;
 }
+
+.alert--info {
+  background: var(--accent-dim, rgba(255, 46, 147, 0.14));
+  border: 1px solid rgba(255, 46, 147, 0.5);
+}

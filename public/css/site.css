@@ -1938,27 +1938,31 @@ main {
   /* įstrižas šviesos atspindys, kuris perbėga per nuotrauką */
   /* rožinis (svetainės akcento) atspalvis su šviesia šerdimi */
   background: linear-gradient(
-    115deg,
-    transparent 32%,
-    rgba(255, 46, 147, 0.28) 41%,
-    rgba(255, 214, 236, 0.55) 48%,
-    rgba(255, 46, 147, 0.28) 55%,
-    transparent 64%
+    45deg,
+    transparent 40%,
+    rgba(255, 46, 147, 0.3) 46%,
+    rgba(255, 214, 236, 0.6) 50%,
+    rgba(255, 46, 147, 0.3) 54%,
+    transparent 60%
   );
-  background-size: 260% 100%;
-  background-position: -30% 0;
+  background-size: 300% 300%;
+  /* pradžia: blyksnis už apatinio kairiojo kampo */
+  background-position: 100% 0%;
   background-repeat: no-repeat;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0);
-  transition:
-    background-position 0.5s cubic-bezier(0.3, 0.1, 0.3, 1),
-    box-shadow 0.25s;
+  /* nuvedus pelę – jokios animacijos atgal (blyksnis tiesiog dingsta) */
+  transition: box-shadow 0.2s;
 }
 .gallery-item:hover::after,
 .gallery-item:focus-visible::after,
 .news-card__media:hover::after,
 .trainer__photo:hover::after,
 .article__image:hover::after {
-  background-position: 130% 0;
+  /* užvedus: blyksnis perbėga iš apačios kairės į viršų dešinėn */
+  background-position: 0% 100%;
+  transition:
+    background-position 0.32s ease-out,
+    box-shadow 0.2s;
   /* rožinis „stiklo“ kraštas, šviesi viršutinė briauna ir švytėjimas */
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 46, 147, 0.75),

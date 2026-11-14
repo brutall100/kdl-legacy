@@ -72,7 +72,7 @@
             <video class="upload__video" src="<%= img(v) %>" muted controls preload="metadata"></video>
           <% } %>
           <div class="upload__body">
-            <input class="upload__file" id="<%= id %>" type="file" name="<%= n %>" accept="video/mp4,video/webm" aria-label="<%= aria %>">
+            <input class="upload__file" id="<%= id %>" type="file" name="<%= n %>" accept="video/*,.mov,.m4v" aria-label="<%= aria %>">
             <% if (v) { %>
               <label class="check"><input type="checkbox" name="<%= n %>__remove" value="1"> <span>Pašalinti vaizdo įrašą (vėl bus rodomi animuoti šokėjai)</span></label>
             <% } %>

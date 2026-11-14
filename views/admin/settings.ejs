@@ -7,6 +7,12 @@
 </div>
 <% } %>
 
+<% if (s.hero_video_status === 'converting') { %>
+<div class="alert alert--info" role="status">⏳ Fono vaizdo įrašas konvertuojamas į MP4 – tai gali užtrukti iki kelių minučių. Svetainėje kol kas rodomas ankstesnis vaizdas. Perkraukite šį puslapį po minutės.</div>
+<% } else if (s.hero_video_status === 'error') { %>
+<div class="alert alert--error" role="alert">Nepavyko konvertuoti vaizdo įrašo. Pabandykite kitą failą (pvz. trumpesnį) arba įkelkite MP4.</div>
+<% } %>
+
 <nav class="tabs tabs--anchor" aria-label="Skiltys">
   <% groups.forEach((g) => { %><a class="tab" href="#<%= g.key %>"><%= g.title %></a><% }) %>
 </nav>

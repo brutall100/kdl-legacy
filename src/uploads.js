@@ -17,6 +17,9 @@ const IMAGE_RE = /^[a-f0-9]{24}\.webp$/;
 const VIDEO_RE = /^[a-f0-9]{24}\.(mp4|webm)$/;
 const IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/tiff']);
 const VIDEO_MIMES = { 'video/mp4': 'mp4', 'video/webm': 'webm' };
+// Formatai, kuriuos priimame ir konvertuojame į MP4 (telefonų .mov, .m4v ir kt.)
+const VIDEO_ANY_MIME = /^video\//;
+const VIDEO_EXT = /\.(mp4|m4v|mov|webm|avi|mkv|3gp)$/i;
 
 const TMP_DIR = path.join(config.DATA_DIR, 'tmp');
 fs.rmSync(TMP_DIR, { recursive: true, force: true }); // išvalom nebaigtus įkėlimus
@@ -25,7 +28,10 @@ fs.mkdirSync(TMP_DIR, { recursive: true });
 const newId = () => crypto.randomBytes(12).toString('hex');
 
 function fileFilter(req, file, cb) {
-  const ok = file.fieldname === 'hero_video' ? Boolean(VIDEO_MIMES[file.mimetype]) : IMAGE_MIMES.has(file.mimetype);
+  const ok =
+    file.fieldname === 'hero_video'
+      ? VIDEO_ANY_MIME.test(file.mimetype) || VIDEO_EXT.test(file.originalname || '')
+      : IMAGE_MIMES.has(file.mimetype);
   // Atmestus failus įsimename, kad forma galėtų parodyti aiškų pranešimą.
   if (!ok) (req.rejectedFiles ||= []).push(file.originalname);
   cb(null, ok);
@@ -155,6 +161,7 @@ module.exports = {
   settingsUpload,
   saveImage,
   saveVideo,
+  TMP_DIR,
   deleteImage,
   deleteVideo,
   imageSize,
