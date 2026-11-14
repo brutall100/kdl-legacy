@@ -8,6 +8,46 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const html = document.documentElement;
 
+  /* ---------- Švarūs adresai: be #grotažymių ---------- */
+  // Paspaudus nuorodą į skiltį (#apie, #kontaktai…) puslapis nuslenka, bet adresas lieka švarus.
+  const cleanUrl = () => {
+    if (window.location.hash || window.location.search.includes('sent=')) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  };
+  const scrollToId = (id, smooth) => {
+    const target = id && document.getElementById(id);
+    if (!target) return false;
+    if (id === 'main') {
+      window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
+      return true;
+    }
+    target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+    return true;
+  };
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href*="#"]');
+    if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    // galerijos nuotraukos ir „Pereiti prie turinio“ (klaviatūrai) – įprastas elgesys
+    if (link.hasAttribute('data-lb') || link.classList.contains('skip-link')) return;
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin || url.pathname !== window.location.pathname) return;
+    const id = decodeURIComponent(url.hash.slice(1));
+    if (!scrollToId(id, true)) return;
+    e.preventDefault();
+    cleanUrl();
+  });
+  // Atėjus iš kito puslapio (pvz. /naujienos → /#kontaktai): nuslenkam ir išvalom adresą.
+  if (window.location.hash) {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    window.addEventListener('load', () => {
+      scrollToId(id, false);
+      cleanUrl();
+    });
+  } else {
+    cleanUrl();
+  }
+
   /* ---------- Antraštė ---------- */
   const header = $('[data-header]');
   if (header) {
