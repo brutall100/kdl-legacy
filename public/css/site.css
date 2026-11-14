@@ -1807,18 +1807,21 @@ main {
     repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 14px),
     var(--bg-2);
 }
-.news-card__dancer {
-  width: 46%;
-  height: auto;
-  aspect-ratio: 1;
-  color: rgba(255, 255, 255, 0.16);
+.news-card__logo {
+  width: 68%;
+  --kd-letters: rgba(255, 255, 255, 0.55);
+  --kd-text: rgba(255, 255, 255, 0.55);
+  --kd-dancer: rgba(255, 46, 147, 0.7);
   transition:
     transform 0.6s var(--ease),
-    color 0.3s;
+    filter 0.4s;
 }
-.news-card:hover .news-card__dancer {
-  transform: scale(1.08) rotate(-4deg);
-  color: var(--pink);
+.news-card:hover .news-card__logo {
+  transform: scale(1.06) rotate(-2deg);
+  --kd-letters: #fff;
+  --kd-text: #fff;
+  --kd-dancer: var(--pink);
+  filter: drop-shadow(0 0 18px rgba(255, 46, 147, 0.45));
 }
 .news-card__body {
   padding-top: 1.2rem;
