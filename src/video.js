@@ -5,7 +5,7 @@
  *
  * Kodėl MP4, o ne WebM: H.264 rodomas visose naršyklėse (ir iPhone Safari),
  * o mažame serveryje (Render 0,5 CPU / 512 MB) koduojamas greičiau ir su mažiau atminties.
- * Pradinio ekrano fonui: iki 45 s, su garsu (AAC), iki 1280 px pločio.
+ * Pradinio ekrano fonui: iki 45 s, su garsu (AAC), iki 1920 px pločio (Full HD).
  * Svetainėje paleidžiamas be garso (naršyklės kitaip neleidžia automatinio paleidimo), garsą įjungia lankytojas mygtuku.
  */
 
@@ -45,8 +45,12 @@ function convertToMp4(input) {
     '-i', input,
     '-t', String(MAX_SECONDS),
     '-c:a', 'aac', '-b:a', '128k', '-ac', '2',
-    '-vf', "scale='min(1280,iw)':-2,fps=30",
-    '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '27',
+    // Full HD, gera kokybė; bitų srautas ribojamas (6 Mbps), kad failas krautųsi greitai,
+    // o greitas režimas be „žvilgsnio į priekį“ – kad koduojant tilptų į 512 MB serverį (ffmpeg ~200 MB).
+    '-vf', "scale='min(1920,iw)':-2,fps=30",
+    '-c:v', 'libx264', '-preset', 'superfast', '-crf', '20',
+    '-maxrate', '6M', '-bufsize', '12M',
+    '-x264-params', 'rc-lookahead=0:ref=1',
     '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
     '-threads', '1',
     '-f', 'mp4', part,
