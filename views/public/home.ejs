@@ -2,7 +2,8 @@
 
 <%
   const styleWords = classes.flatMap((c) => L(c, 'name').split('/').map((x) => x.trim()).filter(Boolean));
-  const marquee = styleWords.length ? styleWords : [t('about.pillar1.title'), t('about.pillar2.title'), t('about.pillar3.title')];
+  const customMarquee = lines(S('marquee'));
+  const marquee = customMarquee.length ? customMarquee : styleWords.length ? styleWords : [t('about.pillar1.title'), t('about.pillar2.title'), t('about.pillar3.title')];
   const aboutTitle = S('about_title');
   const aboutWords = aboutTitle.split(/\s+/);
   const aboutLast = aboutWords.pop();
