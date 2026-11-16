@@ -107,8 +107,11 @@ function loginUrl(origin, state) {
   u.searchParams.set('redirect_uri', redirectUri(origin));
   u.searchParams.set('state', state);
   u.searchParams.set('response_type', 'code');
-  if (CONFIG_ID) u.searchParams.set('config_id', CONFIG_ID);
-  else u.searchParams.set('scope', SCOPES.join(','));
+  if (CONFIG_ID) {
+    // „Unified login“ / Facebook Login for Business: leidimai aprašyti konfigūracijoje
+    u.searchParams.set('config_id', CONFIG_ID);
+    u.searchParams.set('override_default_response_type', 'true');
+  } else u.searchParams.set('scope', SCOPES.join(','));
   return u.toString();
 }
 
@@ -170,12 +173,40 @@ async function connect(code, origin) {
     redirect_uri: redirectUri(origin),
     code,
   });
-  const long = await graph('oauth/access_token', {
-    grant_type: 'fb_exchange_token',
-    client_id: APP_ID,
-    client_secret: APP_SECRET,
-    fb_exchange_token: short.access_token,
-  });
+
+  // „Instagram API with Unified login“ (naujoms programėlėms): sistemos naudotojo raktas,
+  // Instagram paskyra priskiriama tiesiogiai – Facebook puslapio nereikia.
+  try {
+    const assigned = await graph('me/assigned_instagram_accounts', { fields: 'id,username', access_token: short.access_token });
+    const acc = (assigned.data || []).find((a) => a.id);
+    if (acc) {
+      setSettings({
+        ig_mode: 'facebook',
+        ig_page_token: short.access_token,
+        ig_user_id: acc.id,
+        ig_username: acc.username || '',
+        ig_page_name: '',
+        ig_status: 'ok',
+        ig_error: '',
+      });
+      await sync();
+      return { username: acc.username, pages: 0 };
+    }
+  } catch (err) {
+    console.warn('[instagram] assigned_instagram_accounts:', err.message);
+  }
+
+  let long = short;
+  try {
+    long = await graph('oauth/access_token', {
+      grant_type: 'fb_exchange_token',
+      client_id: APP_ID,
+      client_secret: APP_SECRET,
+      fb_exchange_token: short.access_token,
+    });
+  } catch (err) {
+    console.warn('[instagram] ilgalaikis raktas:', err.message);
+  }
   const fields = 'id,name,access_token,instagram_business_account{id,username}';
   const pages = await graph('me/accounts', { fields, access_token: long.access_token });
   let list = pages.data || [];

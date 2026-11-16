@@ -10,13 +10,13 @@
 
   <% if (!configured) { %>
     <p class="muted">Automatinis prijungimas dar nesukonfigūruotas serveryje: reikia Meta programėlės duomenų
-      (<code>IG_APP_ID</code> ir <code>IG_APP_SECRET</code> – Render → Environment). Kol kas galite pridėti įrašus rankiniu būdu (žemiau).</p>
-    <p class="fld__help">Meta programėlėje („Instagram API“ → „API setup with Instagram login“ → „Set up Instagram business login“ → „OAuth redirect URIs“) reikės įrašyti: <code><%= redirectUri %></code></p>
+      (Render → Environment: <code>META_APP_ID</code>, <code>META_APP_SECRET</code>, <code>META_CONFIG_ID</code>). Kol kas galite pridėti įrašus rankiniu būdu (žemiau).</p>
+    <p class="fld__help">Meta programėlėje („Instagram API“ → „API setup with Unified login“ → „Redirect URL“) reikės įrašyti: <code><%= redirectUri %></code></p>
   <% } else if (!connected) { %>
     <% if (mode === 'instagram') { %>
     <p class="muted card__intro">Paspaudus mygtuką atsidarys Instagram. Prisijunkite <strong>studijos Instagram paskyra</strong> ir paspauskite „Leisti“ (Allow). Facebook nereikia.
     <% } else { %>
-    <p class="muted card__intro">Paspaudus mygtuką atsidarys Facebook. Prisijunkite <strong>studijos Facebook puslapio savininko</strong> paskyra, pažymėkite studijos puslapį ir Instagram paskyrą, ir paspauskite „Leisti“.
+    <p class="muted card__intro">Paspaudus mygtuką atsidarys Meta prisijungimo langas. Prisijunkite (per Instagram arba Facebook) ir pasirinkite <strong>studijos Instagram paskyrą</strong>, tada „Leisti“ / „Continue“. Senesnėse programėlėse gali prireikti pažymėti ir studijos Facebook puslapį.
     <% } %>
       Svetainė gaus leidimą <strong>tik skaityti</strong> studijos Instagram įrašus.</p>
     <p><a class="btn btn--primary" href="/admin/instagram/connect"><%- icon('instagram', 18) %> Prijungti Instagram</a></p>

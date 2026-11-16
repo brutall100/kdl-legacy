@@ -40,7 +40,7 @@ services:
         sync: false
       - key: META_APP_SECRET
         sync: false
-      - key: META_CONFIG_ID   # tik jei Meta naudoja „Facebook Login for Business“
+      - key: META_CONFIG_ID   # „API setup with Unified login“ konfigūracijos ID
         sync: false
       - key: SITE_URL         # pvz. https://www.kd-legacy.lt (galima įrašyti vėliau)
         sync: false

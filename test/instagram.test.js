@@ -30,6 +30,9 @@ function startMock() {
         if (u.searchParams.get('code')) return json({ access_token: 'SHORT' });
         return json({ access_token: 'LONG' });
       }
+      if (u.pathname === '/v21.0/me/assigned_instagram_accounts') {
+        return json({ data: [] });
+      }
       if (u.pathname === '/v21.0/me/accounts') {
         assert.equal(u.searchParams.get('access_token'), 'LONG');
         // kaip „Facebook Login for Business“: puslapis grąžinamas tik per granular_scopes

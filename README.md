@@ -244,17 +244,17 @@ Visi nustatymai aprašyti faile [`.env.example`](.env.example). Svarbiausi:
 
 Pradiniame puslapyje rodoma iki 8 įrašų: pirma **rankiniu būdu pridėti** (Admin → Instagram → Pridėti įrašą), tada **automatiškai gauti** iš Instagram (atnaujinama kas valandą). Skiltį galima išjungti: Nustatymai → Socialiniai tinklai.
 
-Automatiniam prijungimui (**Instagram Login** – nereikia Facebook puslapio ar verslo portfelio):
+Automatiniam prijungimui (**Instagram API with Unified login** – naujoms Meta programėlėms; Facebook puslapio nereikia):
 1. Instagram **profesionali** (Business/Creator) paskyra.
-2. Meta programėlė (developers.facebook.com) su naudojimo atveju „Instagram API“ → **API setup with Instagram login**:
-   leidimas `instagram_business_basic`; „Set up Instagram business login“ → OAuth redirect URI: `https://JŪSŲ-DOMENAS/admin/instagram/callback`.
-3. Render → Environment: `IG_APP_ID`, `IG_APP_SECRET` (tame pačiame puslapyje rodomi **Instagram** app ID / secret, ne Facebook App ID).
-4. Kol programėlė „Development“ režime: App roles → **Instagram Testers** → pridėti studijos Instagram vardą; patvirtinti Instagram programėlėje (Nustatymai → Programos ir svetainės → Testuotojų kvietimai) arba instagram.com/accounts/manage_access.
-5. Admin → Instagram → **Prijungti Instagram** → prisijungti Instagram → Leisti.
+2. Meta programėlė (developers.facebook.com) su naudojimo atveju „Manage messaging & content on Instagram“, prijungta prie **verslo portfelio**.
+3. Use cases → Customize → **API setup with Unified login** → **Create new configuration**: raktas – System-user access token, galiojimas – **Never**, ištekliai – Instagram account, leidimai – užtenka `instagram_basic`.
+4. Toje pačioje vietoje **Redirect URL**: `https://JŪSŲ-DOMENAS/admin/instagram/callback` → Save.
+5. Render → Environment: `META_APP_ID`, `META_APP_SECRET` (App settings → Basic) ir `META_CONFIG_ID` (konfigūracijos ID).
+6. Admin → Instagram → **Prijungti Instagram** → prisijungti per Instagram arba Facebook → pasirinkti studijos Instagram paskyrą → Continue.
 
-Raktas galioja 60 d.; svetainė jį pratęsia automatiškai (likus < 20 d.). Jei raktas nebegalioja – admin panelėje rodomas įspėjimas, užtenka prijungti iš naujo.
+Sistemos naudotojo raktas nesibaigia. Jei prieiga nutrūksta – admin panelėje rodomas įspėjimas, užtenka prijungti iš naujo.
 
-Alternatyva – Facebook Login (per Facebook puslapį, susietą su Instagram): `META_APP_ID`, `META_APP_SECRET` [, `META_CONFIG_ID`]; naudojama tik kai `IG_APP_ID` nenustatytas.
+Senesnėms programėlėms tinka ir „API setup with Instagram login“ (`IG_APP_ID`, `IG_APP_SECRET`; raktas 60 d., pratęsiamas automatiškai) arba Facebook Login per Facebook puslapį (`META_*` be konfigūracijos).
 
 ## Atsarginės kopijos
 
