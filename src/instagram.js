@@ -95,14 +95,39 @@ async function connect(code, origin) {
     client_secret: APP_SECRET,
     fb_exchange_token: short.access_token,
   });
-  const pages = await graph('me/accounts', {
-    fields: 'id,name,access_token,instagram_business_account{id,username}',
-    access_token: long.access_token,
-  });
-  const page = (pages.data || []).find((p) => p.instagram_business_account);
+  const fields = 'id,name,access_token,instagram_business_account{id,username}';
+  const pages = await graph('me/accounts', { fields, access_token: long.access_token });
+  let list = pages.data || [];
+
+  // „Facebook Login for Business“: puslapiai gali būti nepateikti per me/accounts –
+  // tada jų ID imame iš suteiktų leidimų (granular_scopes) ir užklausiame kiekvieno atskirai.
+  if (!list.some((p) => p.instagram_business_account)) {
+    try {
+      const dbg = await graph('debug_token', { input_token: long.access_token, access_token: `${APP_ID}|${APP_SECRET}` });
+      const ids = new Set();
+      for (const g of (dbg.data && dbg.data.granular_scopes) || []) {
+        if (/^pages_/.test(g.scope)) (g.target_ids || []).forEach((id) => ids.add(id));
+      }
+      for (const id of ids) {
+        if (list.some((p) => p.id === id)) continue;
+        try {
+          list.push(await graph(id, { fields, access_token: long.access_token }));
+        } catch (err) {
+          console.warn('[instagram] puslapis', id, err.message);
+        }
+      }
+    } catch (err) {
+      console.warn('[instagram] debug_token:', err.message);
+    }
+  }
+
+  const page = list.find((p) => p.instagram_business_account && p.access_token);
   if (!page) {
+    const names = list.map((p) => `„${p.name}“${p.instagram_business_account ? '' : ' (be Instagram)'}`).join(', ');
     throw new GraphError(
-      'Nerasta Instagram verslo paskyra, susieta su Facebook puslapiu. Patikrinkite, ar prisijungimo metu pažymėjote studijos puslapį ir Instagram paskyrą.'
+      list.length
+        ? `Rasti Facebook puslapiai: ${names}, bet nė vienas neturi prijungtos Instagram verslo paskyros. Instagram programėlėje patikrinkite: Nustatymai → Paskyros centras / „Bendrinti su kitais“ → Facebook puslapis.`
+        : 'Facebook negrąžino nė vieno puslapio. Prisijungimo lange reikia pažymėti studijos Facebook puslapį ir Instagram paskyrą (jei pasirinkimo nebuvo – programėlės konfigūracijoje turi būti pažymėti „Pages“ ir „Instagram accounts“ ištekliai).'
     );
   }
   const ig = page.instagram_business_account;
@@ -115,7 +140,7 @@ async function connect(code, origin) {
     ig_error: '',
   });
   await sync();
-  return { username: ig.username, pages: (pages.data || []).length };
+  return { username: ig.username, pages: list.length };
 }
 
 function disconnect() {

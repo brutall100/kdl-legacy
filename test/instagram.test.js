@@ -32,7 +32,15 @@ function startMock() {
       }
       if (u.pathname === '/v21.0/me/accounts') {
         assert.equal(u.searchParams.get('access_token'), 'LONG');
-        return json({ data: [{ id: 'P1', name: 'KD Legacy', access_token: 'PAGETOKEN', instagram_business_account: { id: 'IG1', username: 'kdlegacystudija' } }] });
+        // kaip „Facebook Login for Business“: puslapis grąžinamas tik per granular_scopes
+        return json({ data: [] });
+      }
+      if (u.pathname === '/v21.0/debug_token') {
+        assert.equal(u.searchParams.get('access_token'), 'APPID|SECRET');
+        return json({ data: { granular_scopes: [{ scope: 'pages_show_list', target_ids: ['P1'] }, { scope: 'instagram_basic', target_ids: ['IG1'] }] } });
+      }
+      if (u.pathname === '/v21.0/P1') {
+        return json({ id: 'P1', name: 'KD Legacy', access_token: 'PAGETOKEN', instagram_business_account: { id: 'IG1', username: 'kdlegacystudija' } });
       }
       if (u.pathname === '/v21.0/IG1/media') {
         if (u.searchParams.get('access_token') !== 'PAGETOKEN') return json({ error: { message: 'bad token', code: 190 } }, 400);
