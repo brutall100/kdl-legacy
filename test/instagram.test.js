@@ -49,6 +49,10 @@ function startMock() {
         if (u.searchParams.get('access_token') !== 'PAGETOKEN') return json({ error: { message: 'bad token', code: 190 } }, 400);
         return json({ data: posts });
       }
+      if (u.pathname === '/v.mp4') {
+        res.writeHead(200, { 'content-type': 'video/mp4' });
+        return res.end(Buffer.alloc(2048, 1));
+      }
       if (u.pathname.startsWith('/img/')) {
         const sharp = require('sharp');
         const buf = await sharp({ create: { width: 400, height: 400, channels: 3, background: '#4d8dff' } }).jpeg().toBuffer();
@@ -149,6 +153,11 @@ test('prijungimas, įrašų parsisiuntimas ir rodymas svetainėje', async () => 
   assert.match(home, /id="instagram"/);
   assert.match(home, /instagram\.com\/p\/AAA/);
   assert.match(home, /class="ig-badge"/, 'vaizdo įrašas pažymėtas');
+  const vid = db.prepare("SELECT video FROM ig_auto WHERE ig_id = 'm2'").get().video;
+  assert.match(vid, /^ig-[a-f0-9]{24}\.mp4$/, 'vaizdo įrašas parsisiųstas');
+  assert.ok(fs.existsSync(path.join(DATA_DIR, 'uploads', vid)));
+  assert.match(home, new RegExp(`data-video="/uploads/${vid}"`), 'groja svetainėje');
+  assert.equal((await fetch(`${base}/uploads/${vid}`)).status, 200);
 
   // 3) pakartotinis atnaujinimas: vienas įrašas dingo Instagram'e, atsirado naujas
   posts = [{ id: 'm3', caption: 'Naujas', media_type: 'IMAGE', media_url: `${mockBase}/img/3.jpg`, permalink: 'https://www.instagram.com/p/CCC/', timestamp: '2026-11-12T10:00:00+0000' }, posts[0]];
@@ -157,6 +166,7 @@ test('prijungimas, įrašų parsisiuntimas ir rodymas svetainėje', async () => 
   await req('/admin/instagram/sync', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: `_csrf=${encodeURIComponent(c2)}` });
   const ids = db.prepare('SELECT ig_id FROM ig_auto ORDER BY taken_at DESC').all().map((r) => r.ig_id);
   assert.deepEqual(ids, ['m3', 'm1']);
+  assert.ok(!fs.existsSync(path.join(DATA_DIR, 'uploads', vid)), 'pašalinto įrašo video ištrintas');
 
   // 4) netinkamas raktas → būsena „expired“, svetainė nelūžta
   db.prepare("UPDATE settings SET value = 'BAD' WHERE key = 'ig_page_token'").run();

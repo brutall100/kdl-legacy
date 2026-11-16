@@ -65,7 +65,8 @@
   <button class="lightbox__nav lightbox__nav--prev" type="button" data-lb-prev aria-label="<%= t('gallery.prev') %>"><%- icon('arrow', 26) %></button>
   <figure class="lightbox__figure">
     <img class="lightbox__img" alt="" data-lb-img>
-    <figcaption class="lightbox__caption" data-lb-caption></figcaption>
+    <video class="lightbox__img lightbox__video" controls playsinline preload="metadata" data-lb-video hidden></video>
+    <figcaption class="lightbox__caption"><span data-lb-caption></span> <a class="lightbox__ext" href="#" target="_blank" rel="noopener noreferrer" data-lb-link hidden>Instagram ↗</a></figcaption>
   </figure>
   <button class="lightbox__nav lightbox__nav--next" type="button" data-lb-next aria-label="<%= t('gallery.next') %>"><%- icon('arrow', 26) %></button>
 </div>

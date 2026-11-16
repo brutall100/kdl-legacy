@@ -222,6 +222,16 @@
   if (lb) {
     const img = $('[data-lb-img]', lb);
     const caption = $('[data-lb-caption]', lb);
+    const video = $('[data-lb-video]', lb);
+    const ext = $('[data-lb-link]', lb);
+    const stopVideo = () => {
+      if (!video || video.hidden) return;
+      video.pause();
+      video.removeAttribute('src');
+      video.removeAttribute('poster');
+      video.load();
+      video.hidden = true;
+    };
     let group = [];
     let index = 0;
     let lastFocus = null;
@@ -229,11 +239,27 @@
     const show = (i) => {
       index = (i + group.length) % group.length;
       const link = group[index];
-      img.src = link.href;
+      stopVideo();
+      if (video && link.dataset.video) {
+        img.hidden = true;
+        img.removeAttribute('src');
+        video.hidden = false;
+        if (link.dataset.poster) video.poster = link.dataset.poster;
+        video.src = link.dataset.video;
+        video.play().catch(() => {});
+      } else {
+        img.hidden = false;
+        img.src = link.href;
+      }
       img.alt = link.dataset.caption || '';
       caption.textContent = link.dataset.caption || '';
+      if (ext) {
+        ext.hidden = !link.dataset.link;
+        if (link.dataset.link) ext.href = link.dataset.link;
+      }
       // iš anksto įkeliam gretimą nuotrauką
-      if (group.length > 1) new Image().src = group[(index + 1) % group.length].href;
+      const next = group.length > 1 && group[(index + 1) % group.length];
+      if (next && !next.dataset.video) new Image().src = next.href;
     };
     const open = (link) => {
       const scope = link.closest('[data-gallery]');
@@ -247,6 +273,7 @@
     };
     const close = () => {
       lb.hidden = true;
+      stopVideo();
       img.removeAttribute('src');
       document.body.style.overflow = '';
       if (lastFocus) lastFocus.focus();

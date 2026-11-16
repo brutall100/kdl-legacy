@@ -332,9 +332,13 @@
       </a>
       <% } %>
     </header>
-    <div class="ig-grid">
+    <div class="ig-grid" data-gallery>
       <% igFeed.forEach((p) => { const cap = L(p, 'caption'); %>
+      <% if (!p.manual) { %>
+      <a class="ig-tile" href="<%= p.videoFile ? '/uploads/' + p.videoFile : '/uploads/' + p.image %>" data-lb<% if (p.videoFile) { %> data-video="/uploads/<%= p.videoFile %>" data-poster="/uploads/<%= p.image %>"<% } %> data-caption="<%= cap ? (cap.length > 160 ? cap.slice(0, 160) + '…' : cap) : '' %>" data-link="<%= p.link || '' %>" aria-label="<%= cap ? cap.slice(0, 90) : t('ig.post') %>" data-reveal>
+      <% } else { %>
       <a class="ig-tile" href="<%= p.link || igUrl || '#' %>" target="_blank" rel="noopener noreferrer" aria-label="<%= cap ? cap.slice(0, 90) : t('ig.post') %>" data-reveal>
+      <% } %>
         <img src="<%= thumb(p.image) %>" alt="" loading="lazy" decoding="async">
         <% if (p.video) { %><span class="ig-badge" aria-hidden="true">▶</span><% } %>
         <% if (cap) { %><span class="ig-over" aria-hidden="true"><%= cap.length > 90 ? cap.slice(0, 90) + '…' : cap %></span><% } %>

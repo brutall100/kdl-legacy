@@ -2070,6 +2070,15 @@ main {
   border-radius: 10px;
   box-shadow: 0 0 80px -20px var(--pink-glow);
 }
+.lightbox__video {
+  width: min(100%, 520px);
+  background: #000;
+}
+.lightbox__ext {
+  margin-left: 0.6rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
 .lightbox__caption {
   color: var(--muted);
   font-size: 0.95rem;

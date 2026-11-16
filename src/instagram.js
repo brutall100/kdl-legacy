@@ -20,6 +20,10 @@
 const crypto = require('crypto');
 const config = require('./config');
 const { db, getSettings, setSettings } = require('./db');
+const fs = require('fs');
+const path = require('path');
+const { Readable } = require('stream');
+const { pipeline } = require('stream/promises');
 const { saveImage, deleteImage } = require('./uploads');
 
 const GRAPH = (process.env.META_GRAPH_URL || 'https://graph.facebook.com').replace(/\/+$/, '');
@@ -53,6 +57,44 @@ db.exec(`
     taken_at   TEXT
   );
 `);
+if (!db.prepare('PRAGMA table_info(ig_auto)').all().some((c) => c.name === 'video')) {
+  db.exec('ALTER TABLE ig_auto ADD COLUMN video TEXT');
+}
+
+const VIDEO_MAX_BYTES = 60 * 1024 * 1024; // didesni – tik nuoroda į Instagram
+const VIDEO_SLOTS = 8; // vaizdo įrašus laikome tik tiek naujausių (vieta diske)
+const VIDEO_FILE_RE = /^ig-[a-f0-9]{24}\.mp4$/;
+
+/** Parsisiunčia Instagram vaizdo įrašą tiesiai į diską (be buferio atmintyje). */
+async function downloadVideo(url) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(120000) });
+  if (!res.ok || !res.body) throw new Error(`Nepavyko parsisiųsti vaizdo įrašo (${res.status})`);
+  const len = Number(res.headers.get('content-length')) || 0;
+  if (len > VIDEO_MAX_BYTES) {
+    await res.body.cancel();
+    throw new Error('Vaizdo įrašas per didelis');
+  }
+  const name = `ig-${crypto.randomBytes(12).toString('hex')}.mp4`;
+  const target = path.join(config.UPLOAD_DIR, name);
+  let size = 0;
+  const limit = new (require('stream').Transform)({
+    transform(chunk, _enc, cb) {
+      size += chunk.length;
+      cb(size > VIDEO_MAX_BYTES ? new Error('Vaizdo įrašas per didelis') : null, chunk);
+    },
+  });
+  try {
+    await pipeline(Readable.fromWeb(res.body), limit, fs.createWriteStream(target));
+  } catch (err) {
+    fs.rmSync(target, { force: true });
+    throw err;
+  }
+  return name;
+}
+
+function deleteVideoFile(name) {
+  if (name && VIDEO_FILE_RE.test(name)) fs.rmSync(path.join(config.UPLOAD_DIR, name), { force: true });
+}
 
 const configured = () => IG_MODE || Boolean(APP_ID && APP_SECRET);
 const isConnected = () => Boolean(getSettings().ig_page_token && getSettings().ig_user_id);
@@ -257,7 +299,10 @@ async function connect(code, origin) {
 }
 
 function disconnect() {
-  for (const row of db.prepare('SELECT image FROM ig_auto').all()) deleteImage(row.image);
+  for (const row of db.prepare('SELECT image, video FROM ig_auto').all()) {
+    deleteImage(row.image);
+    deleteVideoFile(row.video);
+  }
   db.prepare('DELETE FROM ig_auto').run();
   setSettings({ ig_mode: '', ig_token_expires: '', ig_page_token: '', ig_user_id: '', ig_username: '', ig_page_name: '', ig_status: '', ig_error: '', ig_synced_at: '' });
 }
@@ -289,20 +334,39 @@ function sync() {
       const existing = new Map(db.prepare('SELECT * FROM ig_auto').all().map((r) => [r.ig_id, r]));
       const keep = new Set();
       let added = 0;
-      for (const m of items) {
+      for (const [i, m] of items.entries()) {
         keep.add(m.id);
         const old = existing.get(m.id);
+        const wantVideo = m.media_type === 'VIDEO' && m.media_url && i < VIDEO_SLOTS;
         if (old) {
           db.prepare('UPDATE ig_auto SET caption = ?, permalink = ? WHERE id = ?').run(m.caption || '', m.permalink || '', old.id);
+          if (wantVideo && !old.video) {
+            try {
+              db.prepare('UPDATE ig_auto SET video = ? WHERE id = ?').run(await downloadVideo(m.media_url), old.id);
+            } catch (err) {
+              console.warn('[instagram] video:', err.message);
+            }
+          } else if (!wantVideo && old.video) {
+            deleteVideoFile(old.video);
+            db.prepare('UPDATE ig_auto SET video = NULL WHERE id = ?').run(old.id);
+          }
           continue;
         }
         const src = m.media_type === 'VIDEO' ? m.thumbnail_url || m.media_url : m.media_url;
         if (!src) continue;
         try {
           const image = await saveImage(await download(src), { max: 1080, thumb: 600 });
+          let video = null;
+          if (wantVideo) {
+            try {
+              video = await downloadVideo(m.media_url);
+            } catch (err) {
+              console.warn('[instagram] video:', err.message);
+            }
+          }
           db.prepare(
-            'INSERT INTO ig_auto (ig_id, permalink, caption, media_type, image, taken_at) VALUES (?, ?, ?, ?, ?, ?)'
-          ).run(m.id, m.permalink || '', m.caption || '', m.media_type || 'IMAGE', image, m.timestamp || '');
+            'INSERT INTO ig_auto (ig_id, permalink, caption, media_type, image, video, taken_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+          ).run(m.id, m.permalink || '', m.caption || '', m.media_type || 'IMAGE', image, video, m.timestamp || '');
           added++;
         } catch (err) {
           console.warn('[instagram]', err.message);
@@ -311,6 +375,7 @@ function sync() {
       for (const [igId, row] of existing) {
         if (!keep.has(igId)) {
           deleteImage(row.image);
+          deleteVideoFile(row.video);
           db.prepare('DELETE FROM ig_auto WHERE id = ?').run(row.id);
         }
       }
@@ -345,7 +410,7 @@ function feed(limit = 8) {
   const auto = db
     .prepare('SELECT * FROM ig_auto ORDER BY taken_at DESC, id DESC')
     .all()
-    .map((r) => ({ manual: false, image: r.image, link: r.permalink, caption_lt: r.caption, caption_en: r.caption, video: r.media_type === 'VIDEO' }));
+    .map((r) => ({ manual: false, image: r.image, link: r.permalink, caption_lt: r.caption, caption_en: r.caption, video: r.media_type === 'VIDEO', videoFile: r.video || '' }));
   return [...manual, ...auto].slice(0, limit);
 }
 
