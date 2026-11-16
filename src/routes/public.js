@@ -8,6 +8,7 @@ const { db, getSettings } = require('../db');
 const h = require('../helpers');
 const { notifyInquiry } = require('../mailer');
 const { withSizes } = require('../uploads');
+const instagram = require('../instagram');
 
 const router = express.Router();
 
@@ -171,6 +172,7 @@ function home(lang) {
       trainers: all('SELECT * FROM trainers ORDER BY sort, id'),
       prices: all('SELECT * FROM prices ORDER BY sort, id'),
       faq: all('SELECT * FROM faq ORDER BY sort, id'),
+      igFeed: s.instagram_section === '0' ? [] : instagram.feed(8),
       testimonials: all('SELECT * FROM testimonials ORDER BY sort, id'),
       news: all('SELECT * FROM news WHERE published = 1 ORDER BY published_at DESC, id DESC LIMIT 3'),
       events: upcomingEvents(4),

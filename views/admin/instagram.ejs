@@ -1,0 +1,60 @@
+<%- include('partials/top', { title: 'Instagram' }) %>
+
+<section class="card">
+  <header class="card__head">
+    <h2 class="card__title">Automatinis prijungimas</h2>
+    <% if (connected && ig.status === 'ok') { %><span class="status status--on">Prijungta</span>
+    <% } else if (connected) { %><span class="status status--new">Reikia dėmesio</span>
+    <% } else { %><span class="status">Neprijungta</span><% } %>
+  </header>
+
+  <% if (!configured) { %>
+    <p class="muted">Automatinis prijungimas dar nesukonfigūruotas serveryje: reikia Meta programėlės duomenų
+      (<code>META_APP_ID</code> ir <code>META_APP_SECRET</code> – Render → Environment). Kol kas galite pridėti įrašus rankiniu būdu (žemiau).</p>
+    <p class="fld__help">Meta programėlės nustatymuose („Facebook Login“ → „Valid OAuth Redirect URIs“) reikės įrašyti: <code><%= redirectUri %></code></p>
+  <% } else if (!connected) { %>
+    <p class="muted card__intro">Paspaudus mygtuką atsidarys Facebook. Prisijunkite <strong>studijos Facebook puslapio savininko</strong> paskyra, pažymėkite studijos puslapį ir Instagram paskyrą, ir paspauskite „Leisti“.
+      Svetainė gaus leidimą <strong>tik skaityti</strong> studijos Instagram įrašus.</p>
+    <p><a class="btn btn--primary" href="/admin/instagram/connect"><%- icon('instagram', 18) %> Prijungti Instagram</a></p>
+  <% } else { %>
+    <dl class="facts">
+      <div><dt>Instagram paskyra</dt><dd>@<%= ig.username %></dd></div>
+      <% if (ig.page) { %><div><dt>Facebook puslapis</dt><dd><%= ig.page %></dd></div><% } %>
+      <div><dt>Paskutinį kartą atnaujinta</dt><dd><%= ig.syncedAt ? new Date(ig.syncedAt).toLocaleString('lt-LT', { timeZone: 'Europe/Vilnius', dateStyle: 'medium', timeStyle: 'short' }) : '—' %></dd></div>
+      <div><dt>Įrašų gauta</dt><dd><%= autoPosts.length %></dd></div>
+    </dl>
+    <% if (ig.status === 'expired') { %>
+      <p class="alert alert--error">Prieiga nebegalioja (pvz. pakeistas Facebook slaptažodis ar atšauktas leidimas). Prijunkite iš naujo.</p>
+      <p><a class="btn btn--primary" href="/admin/instagram/connect">Prijungti iš naujo</a></p>
+    <% } else if (ig.status === 'error') { %>
+      <p class="alert alert--error">Paskutinis atnaujinimas nepavyko: <%= ig.error %></p>
+    <% } %>
+    <p class="muted">Nauji įrašai atsisiunčiami automatiškai kas valandą.</p>
+    <div class="form__actions">
+      <form method="post" action="/admin/instagram/sync"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--primary" type="submit">Atnaujinti dabar</button></form>
+      <form method="post" action="/admin/instagram/disconnect" data-confirm="Atjungti Instagram? Automatiškai gauti įrašai bus pašalinti iš svetainės."><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--danger" type="submit">Atjungti</button></form>
+    </div>
+    <% if (autoPosts.length) { %>
+      <ul class="tiles ig-admin">
+        <% autoPosts.slice(0, 8).forEach((p) => { %>
+          <li class="tile"><a class="tile__img" href="<%= p.permalink %>" target="_blank" rel="noopener"><img src="<%= thumb(p.image) %>" alt="" loading="lazy"></a></li>
+        <% }) %>
+      </ul>
+    <% } %>
+  <% } %>
+</section>
+
+<section class="card">
+  <header class="card__head">
+    <h2 class="card__title">Rankiniu būdu pridėti įrašai (<%= manualCount %>)</h2>
+    <a class="btn btn--ghost" href="/admin/r/instagram"><%- icon('edit', 18) %> Tvarkyti</a>
+  </header>
+  <p class="muted">Rodomi <strong>pirmi</strong>, prieš automatiškai gautus. Tinka „prisegti“ svarbų įrašą arba jei automatinis prijungimas neveikia.</p>
+  <p><a class="btn btn--primary" href="/admin/r/instagram/new"><%- icon('plus', 18) %> Pridėti įrašą</a></p>
+</section>
+
+<section class="card">
+  <p class="muted">Skiltis svetainėje <strong><%= ig.sectionOn ? 'rodoma' : 'išjungta' %></strong>. Ją galite išjungti: <a class="link" href="/admin/settings#social">Nustatymai → Socialiniai tinklai</a>. Svetainėje rodoma iki 8 įrašų.</p>
+</section>
+
+<%- include('partials/bottom') %>

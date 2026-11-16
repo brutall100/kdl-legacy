@@ -240,6 +240,20 @@ Visi nustatymai aprašyti faile [`.env.example`](.env.example). Svarbiausi:
 
 ---
 
+## Instagram įrašų juosta
+
+Pradiniame puslapyje rodoma iki 8 įrašų: pirma **rankiniu būdu pridėti** (Admin → Instagram → Pridėti įrašą), tada **automatiškai gauti** iš Instagram (atnaujinama kas valandą). Skiltį galima išjungti: Nustatymai → Socialiniai tinklai.
+
+Automatiniam prijungimui reikia:
+1. Instagram **profesionalios** (Business/Creator) paskyros, susietos su Facebook puslapiu.
+2. Meta programėlės (developers.facebook.com → Create app → tipas „Business“ / naudojimo atvejis su Facebook Login ir Instagram Graph API).
+   „Facebook Login → Settings → Valid OAuth Redirect URIs“: `https://JŪSŲ-DOMENAS/admin/instagram/callback`.
+3. Render → Environment: `META_APP_ID`, `META_APP_SECRET`.
+4. Kol programėlė „Development“ režime, prisijungiantis žmogus (puslapio savininkas) turi būti pridėtas programėlės **App roles → Testers** (ir patvirtinti kvietimą).
+5. Admin → Instagram → **Prijungti Instagram** → prisijungti Facebook → pažymėti puslapį ir Instagram paskyrą → Leisti.
+
+Svetainė gauna tik skaitymo leidimą; puslapio raktas nesibaigia, bet pakeitus Facebook slaptažodį gali tekti prijungti iš naujo (admin panelėje rodomas įspėjimas).
+
 ## Atsarginės kopijos
 
 Visa svetainės informacija yra kataloge `DATA_DIR` (numatytasis `./data`):

@@ -312,6 +312,42 @@
 </section>
 <% } %>
 
+<!-- ============================ INSTAGRAM ============================ -->
+<% if (igFeed.length) { %>
+<%
+  const igUrl = (socials.find((x) => x.key === 'instagram') || {}).url || (s.ig_username ? 'https://www.instagram.com/' + s.ig_username + '/' : '');
+  const igHandle = s.ig_username || (igUrl.match(/instagram\.com\/([^/?#]+)/) || [])[1] || '';
+%>
+<section class="section ig" id="instagram">
+  <div class="container">
+    <header class="section__head section__head--row" data-reveal>
+      <div>
+        <p class="label">Instagram</p>
+        <h2 class="h2"><%= t('ig.title') %> <em>Instagram</em></h2>
+      </div>
+      <% if (igUrl) { %>
+      <a class="ig-profile" href="<%= igUrl %>" target="_blank" rel="noopener noreferrer">
+        <span class="ig-avatar" aria-hidden="true"><%- icon('instagram', 22) %></span>
+        <span><b>@<%= igHandle %></b><small><%= t('ig.sub') %></small></span>
+      </a>
+      <% } %>
+    </header>
+    <div class="ig-grid">
+      <% igFeed.forEach((p) => { const cap = L(p, 'caption'); %>
+      <a class="ig-tile" href="<%= p.link || igUrl || '#' %>" target="_blank" rel="noopener noreferrer" aria-label="<%= cap ? cap.slice(0, 90) : t('ig.post') %>" data-reveal>
+        <img src="<%= thumb(p.image) %>" alt="" loading="lazy" decoding="async">
+        <% if (p.video) { %><span class="ig-badge" aria-hidden="true">▶</span><% } %>
+        <% if (cap) { %><span class="ig-over" aria-hidden="true"><%= cap.length > 90 ? cap.slice(0, 90) + '…' : cap %></span><% } %>
+      </a>
+      <% }) %>
+    </div>
+    <% if (igUrl) { %>
+    <p class="ig-actions"><a class="btn btn--primary" href="<%= igUrl %>" target="_blank" rel="noopener noreferrer"><%- icon('instagram', 18) %> <%= t('ig.follow') %></a></p>
+    <% } %>
+  </div>
+</section>
+<% } %>
+
 <!-- ============================ D.U.K. ============================ -->
 <% if (faq.length) { %>
 <section class="section faq" id="duk">

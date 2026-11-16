@@ -149,5 +149,9 @@
   "error.text": "Sorry – an error occurred. Please try again later.",
   "back": "Back",
   "hero.soundOn": "Sound on",
-  "hero.soundOff": "Sound off"
+  "hero.soundOff": "Sound off",
+  "ig.title": "Follow us on",
+  "ig.sub": "Latest posts from the studio",
+  "ig.follow": "Follow on Instagram",
+  "ig.post": "Instagram post"
 }

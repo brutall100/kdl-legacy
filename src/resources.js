@@ -199,6 +199,28 @@ const resources = {
     ],
   },
 
+  instagram: {
+    table: 'instagram',
+    label: 'Instagram (rankiniai)',
+    addLabel: 'Pridėti Instagram įrašą',
+    icon: 'instagram',
+    hidden: true, // rodomas per „Instagram“ puslapį, ne šoniniame meniu
+    intro: 'Rankiniu būdu pridėti įrašai rodomi pirmi, prieš automatiškai gautus iš Instagram.',
+    sortable: true,
+    newFirst: true,
+    grid: true,
+    list: [
+      { field: 'image', label: '', type: 'image' },
+      { field: 'caption_lt', label: 'Tekstas', main: true },
+    ],
+    fields: [
+      { name: 'image', label: 'Nuotrauka (įrašo arba vaizdo įrašo viršelis)', type: 'image', required: true },
+      { name: 'link', label: 'Nuoroda į Instagram įrašą', type: 'url', placeholder: 'https://www.instagram.com/p/…', help: 'Instagram programėlėje: įrašas → ⋯ → „Nuoroda“ (Copy link).' },
+      { name: 'caption', label: 'Trumpas tekstas (nebūtina)', type: 'text', i18n: true },
+      { name: 'video', label: 'Tai vaizdo įrašas (reels) – rodyti ▶ ženkliuką', type: 'checkbox', default: 0 },
+    ],
+  },
+
   testimonials: {
     table: 'testimonials',
     label: 'Atsiliepimai',
@@ -286,6 +308,7 @@ const settingsGroups = [
       { name: 'instagram', label: 'Instagram', type: 'url' },
       { name: 'tiktok', label: 'TikTok', type: 'url' },
       { name: 'youtube', label: 'YouTube', type: 'url' },
+      { name: 'instagram_section', label: 'Rodyti Instagram įrašų skiltį pradiniame puslapyje', type: 'checkbox', default: 1 },
     ],
   },
   {

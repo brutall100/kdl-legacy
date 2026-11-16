@@ -149,5 +149,9 @@
   "error.text": "Atsiprašome – įvyko klaida. Pabandykite dar kartą vėliau.",
   "back": "Atgal",
   "hero.soundOn": "Įjungti garsą",
-  "hero.soundOff": "Išjungti garsą"
+  "hero.soundOff": "Išjungti garsą",
+  "ig.title": "Sek mus",
+  "ig.sub": "Naujausi įrašai iš studijos",
+  "ig.follow": "Sekti Instagram",
+  "ig.post": "Instagram įrašas"
 }

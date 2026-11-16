@@ -15,6 +15,7 @@ const { resources, columnsFor, settingsGroups, settingsFields, WEEKDAYS } = requ
 const SqliteStore = require('../session-store');
 const up = require('../uploads');
 const video = require('../video');
+const instagram = require('../instagram');
 const h = require('../helpers');
 
 const router = express.Router();
@@ -698,6 +699,72 @@ function dirSize(dir) {
 }
 
 const fmtSize = (b) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
+
+/* ------------------------------------------------------------------ */
+/* Instagram                                                           */
+/* ------------------------------------------------------------------ */
+
+const origin = (req) => `${req.protocol}://${req.get('host')}`;
+
+router.get('/instagram', (req, res) => {
+  const s = getSettings();
+  res.render('admin/instagram', {
+    active: 'instagram-page',
+    configured: instagram.configured(),
+    connected: instagram.isConnected(),
+    redirectUri: instagram.redirectUri(origin(req)),
+    autoPosts: db.prepare('SELECT * FROM ig_auto ORDER BY taken_at DESC, id DESC').all(),
+    manualCount: db.prepare('SELECT COUNT(*) AS n FROM instagram').get().n,
+    ig: {
+      username: s.ig_username,
+      page: s.ig_page_name,
+      status: s.ig_status,
+      error: s.ig_error,
+      syncedAt: s.ig_synced_at,
+      sectionOn: s.instagram_section !== '0',
+    },
+  });
+});
+
+router.get('/instagram/connect', (req, res) => {
+  if (!instagram.configured()) return res.redirect('/admin/instagram');
+  req.session.igState = instagram.newState();
+  req.session.save(() => res.redirect(instagram.loginUrl(origin(req), req.session.igState)));
+});
+
+router.get('/instagram/callback', async (req, res) => {
+  const expected = req.session.igState;
+  delete req.session.igState;
+  if (req.query.error) {
+    flash(req, 'error', 'Prijungimas atšauktas.');
+    return res.redirect('/admin/instagram');
+  }
+  if (!expected || req.query.state !== expected || !req.query.code) {
+    flash(req, 'error', 'Prijungimas nepavyko (nebegaliojanti sesija). Bandykite dar kartą.');
+    return res.redirect('/admin/instagram');
+  }
+  try {
+    const r = await instagram.connect(String(req.query.code), origin(req));
+    flash(req, 'ok', `Instagram prijungtas: @${r.username}.`);
+  } catch (err) {
+    console.warn('[instagram] prijungimas:', err.message);
+    flash(req, 'error', `Nepavyko prijungti Instagram: ${err.message}`);
+  }
+  res.redirect('/admin/instagram');
+});
+
+router.post('/instagram/sync', async (req, res) => {
+  const r = await instagram.sync();
+  if (r.ok) flash(req, 'ok', `Atnaujinta. Naujų įrašų: ${r.added}.`);
+  else flash(req, 'error', `Nepavyko atnaujinti: ${r.error || 'Instagram neprijungtas.'}`);
+  res.redirect('/admin/instagram');
+});
+
+router.post('/instagram/disconnect', (req, res) => {
+  instagram.disconnect();
+  flash(req, 'ok', 'Instagram atjungtas.');
+  res.redirect('/admin/instagram');
+});
 
 router.get('/backup', (req, res) => {
   const dbFile = path.join(config.DATA_DIR, 'kdlegacy.sqlite');

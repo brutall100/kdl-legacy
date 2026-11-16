@@ -9,6 +9,7 @@ async function main() {
   const seeded = await seed();
   const admin = ensureAdminUser();
   const app = createApp();
+  require('./src/instagram').startScheduler();
 
   const server = app.listen(config.PORT, config.HOST, () => {
     const url = config.SITE_URL || `http://localhost:${config.PORT}`;
