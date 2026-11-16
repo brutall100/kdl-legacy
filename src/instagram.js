@@ -23,6 +23,8 @@ const DIALOG = (process.env.META_DIALOG_URL || 'https://www.facebook.com').repla
 const VERSION = process.env.META_GRAPH_VERSION || 'v21.0';
 const APP_ID = process.env.META_APP_ID || '';
 const APP_SECRET = process.env.META_APP_SECRET || '';
+// „Facebook Login for Business“ programėlėms – konfigūracijos ID (tada leidimai imami iš jos)
+const CONFIG_ID = process.env.META_CONFIG_ID || '';
 const SCOPES = ['instagram_basic', 'pages_show_list', 'pages_read_engagement'];
 const KEEP = 12; // kiek įrašų laikome
 const SYNC_EVERY_MS = 60 * 60 * 1000;
@@ -71,7 +73,8 @@ function loginUrl(origin, state) {
   u.searchParams.set('redirect_uri', redirectUri(origin));
   u.searchParams.set('state', state);
   u.searchParams.set('response_type', 'code');
-  u.searchParams.set('scope', SCOPES.join(','));
+  if (CONFIG_ID) u.searchParams.set('config_id', CONFIG_ID);
+  else u.searchParams.set('scope', SCOPES.join(','));
   return u.toString();
 }
 
