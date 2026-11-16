@@ -10,10 +10,14 @@
 
   <% if (!configured) { %>
     <p class="muted">Automatinis prijungimas dar nesukonfigūruotas serveryje: reikia Meta programėlės duomenų
-      (<code>META_APP_ID</code> ir <code>META_APP_SECRET</code> – Render → Environment). Kol kas galite pridėti įrašus rankiniu būdu (žemiau).</p>
-    <p class="fld__help">Meta programėlės nustatymuose („Facebook Login“ → „Valid OAuth Redirect URIs“) reikės įrašyti: <code><%= redirectUri %></code></p>
+      (<code>IG_APP_ID</code> ir <code>IG_APP_SECRET</code> – Render → Environment). Kol kas galite pridėti įrašus rankiniu būdu (žemiau).</p>
+    <p class="fld__help">Meta programėlėje („Instagram API“ → „API setup with Instagram login“ → „Set up Instagram business login“ → „OAuth redirect URIs“) reikės įrašyti: <code><%= redirectUri %></code></p>
   <% } else if (!connected) { %>
+    <% if (mode === 'instagram') { %>
+    <p class="muted card__intro">Paspaudus mygtuką atsidarys Instagram. Prisijunkite <strong>studijos Instagram paskyra</strong> ir paspauskite „Leisti“ (Allow). Facebook nereikia.
+    <% } else { %>
     <p class="muted card__intro">Paspaudus mygtuką atsidarys Facebook. Prisijunkite <strong>studijos Facebook puslapio savininko</strong> paskyra, pažymėkite studijos puslapį ir Instagram paskyrą, ir paspauskite „Leisti“.
+    <% } %>
       Svetainė gaus leidimą <strong>tik skaityti</strong> studijos Instagram įrašus.</p>
     <p><a class="btn btn--primary" href="/admin/instagram/connect"><%- icon('instagram', 18) %> Prijungti Instagram</a></p>
   <% } else { %>
@@ -24,7 +28,7 @@
       <div><dt>Įrašų gauta</dt><dd><%= autoPosts.length %></dd></div>
     </dl>
     <% if (ig.status === 'expired') { %>
-      <p class="alert alert--error">Prieiga nebegalioja (pvz. pakeistas Facebook slaptažodis ar atšauktas leidimas). Prijunkite iš naujo.</p>
+      <p class="alert alert--error">Prieiga nebegalioja (pvz. pakeistas slaptažodis ar atšauktas leidimas). Prijunkite iš naujo.</p>
       <p><a class="btn btn--primary" href="/admin/instagram/connect">Prijungti iš naujo</a></p>
     <% } else if (ig.status === 'error') { %>
       <p class="alert alert--error">Paskutinis atnaujinimas nepavyko: <%= ig.error %></p>

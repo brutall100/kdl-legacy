@@ -10,7 +10,11 @@
  *     ir prie puslapio prijungtos Instagram paskyros ID.
  *  3. Kas valandą parsisiunčiame naujausius įrašus, jų nuotraukas laikome svetainėje.
  *
- * Reikalingi aplinkos kintamieji: META_APP_ID, META_APP_SECRET.
+ * Du prijungimo būdai (pasirenkama aplinkos kintamaisiais):
+ *  A) Instagram Login (rekomenduojamas, nereikia Facebook puslapio ir verslo portfelio):
+ *     IG_APP_ID, IG_APP_SECRET – „API setup with Instagram login“ skiltyje (Instagram app ID / secret).
+ *     Raktas galioja 60 d., svetainė jį pratęsia automatiškai.
+ *  B) Facebook Login (per Facebook puslapį): META_APP_ID, META_APP_SECRET [, META_CONFIG_ID].
  */
 
 const crypto = require('crypto');
@@ -26,6 +30,15 @@ const APP_SECRET = process.env.META_APP_SECRET || '';
 // „Facebook Login for Business“ programėlėms – konfigūracijos ID (tada leidimai imami iš jos)
 const CONFIG_ID = process.env.META_CONFIG_ID || '';
 const SCOPES = ['instagram_basic', 'pages_show_list', 'pages_read_engagement'];
+
+// Instagram Login
+const IG_APP_ID = process.env.IG_APP_ID || '';
+const IG_APP_SECRET = process.env.IG_APP_SECRET || '';
+const IG_AUTH = (process.env.IG_AUTH_URL || 'https://www.instagram.com').replace(/\/+$/, '');
+const IG_API = (process.env.IG_API_URL || 'https://api.instagram.com').replace(/\/+$/, '');
+const IG_GRAPH = (process.env.IG_GRAPH_URL || 'https://graph.instagram.com').replace(/\/+$/, '');
+const IG_MODE = Boolean(IG_APP_ID && IG_APP_SECRET);
+const REFRESH_BEFORE_MS = 20 * 24 * 60 * 60 * 1000; // pratęsti likus < 20 d.
 const KEEP = 12; // kiek įrašų laikome
 const SYNC_EVERY_MS = 60 * 60 * 1000;
 
@@ -41,7 +54,7 @@ db.exec(`
   );
 `);
 
-const configured = () => Boolean(APP_ID && APP_SECRET);
+const configured = () => IG_MODE || Boolean(APP_ID && APP_SECRET);
 const isConnected = () => Boolean(getSettings().ig_page_token && getSettings().ig_user_id);
 
 class GraphError extends Error {
@@ -49,6 +62,18 @@ class GraphError extends Error {
     super(message);
     this.code = code;
   }
+}
+
+async function request(url, params = {}, init = {}) {
+  url = new URL(url);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const res = await fetch(url, { signal: AbortSignal.timeout(20000), ...init });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.error || data.error_message) {
+    const e = data.error || {};
+    throw new GraphError(e.message || data.error_message || `API klaida (${res.status})`, e.code || data.code);
+  }
+  return data;
 }
 
 async function graph(path, params = {}) {
@@ -68,6 +93,15 @@ function redirectUri(origin) {
 }
 
 function loginUrl(origin, state) {
+  if (IG_MODE) {
+    const iu = new URL(`${IG_AUTH}/oauth/authorize`);
+    iu.searchParams.set('client_id', IG_APP_ID);
+    iu.searchParams.set('redirect_uri', redirectUri(origin));
+    iu.searchParams.set('response_type', 'code');
+    iu.searchParams.set('scope', 'instagram_business_basic');
+    iu.searchParams.set('state', state);
+    return iu.toString();
+  }
   const u = new URL(`${DIALOG}/${VERSION}/dialog/oauth`);
   u.searchParams.set('client_id', APP_ID);
   u.searchParams.set('redirect_uri', redirectUri(origin));
@@ -82,7 +116,54 @@ function loginUrl(origin, state) {
  * Užbaigia prisijungimą: kodas → raktai → Instagram paskyra.
  * @returns {Promise<{username: string, pages: number}>}
  */
+async function connectInstagram(code, origin) {
+  const body = new URLSearchParams({
+    client_id: IG_APP_ID,
+    client_secret: IG_APP_SECRET,
+    grant_type: 'authorization_code',
+    redirect_uri: redirectUri(origin),
+    code: code.replace(/#_$/, ''),
+  });
+  const short = await request(`${IG_API}/oauth/access_token`, {}, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+  });
+  const long = await request(`${IG_GRAPH}/access_token`, {
+    grant_type: 'ig_exchange_token',
+    client_secret: IG_APP_SECRET,
+    access_token: short.access_token,
+  });
+  const me = await request(`${IG_GRAPH}/${VERSION}/me`, { fields: 'user_id,username', access_token: long.access_token });
+  setSettings({
+    ig_mode: 'instagram',
+    ig_page_token: long.access_token,
+    ig_token_expires: String(Date.now() + (Number(long.expires_in) || 60 * 24 * 3600) * 1000),
+    ig_user_id: String(me.user_id || me.id || short.user_id || 'me'),
+    ig_username: me.username || '',
+    ig_page_name: '',
+    ig_status: 'ok',
+    ig_error: '',
+  });
+  await sync();
+  return { username: me.username, pages: 0 };
+}
+
+/** Instagram Login raktas galioja 60 d. – pratęsiame iš anksto. */
+async function refreshIfNeeded(s) {
+  if (s.ig_mode !== 'instagram') return s.ig_page_token;
+  const exp = Number(s.ig_token_expires) || 0;
+  if (exp - Date.now() > REFRESH_BEFORE_MS) return s.ig_page_token;
+  const r = await request(`${IG_GRAPH}/refresh_access_token`, { grant_type: 'ig_refresh_token', access_token: s.ig_page_token });
+  setSettings({
+    ig_page_token: r.access_token,
+    ig_token_expires: String(Date.now() + (Number(r.expires_in) || 60 * 24 * 3600) * 1000),
+  });
+  return r.access_token;
+}
+
 async function connect(code, origin) {
+  if (IG_MODE) return connectInstagram(code, origin);
   const short = await graph('oauth/access_token', {
     client_id: APP_ID,
     client_secret: APP_SECRET,
@@ -132,6 +213,7 @@ async function connect(code, origin) {
   }
   const ig = page.instagram_business_account;
   setSettings({
+    ig_mode: 'facebook',
     ig_page_token: page.access_token,
     ig_user_id: ig.id,
     ig_username: ig.username || '',
@@ -146,7 +228,7 @@ async function connect(code, origin) {
 function disconnect() {
   for (const row of db.prepare('SELECT image FROM ig_auto').all()) deleteImage(row.image);
   db.prepare('DELETE FROM ig_auto').run();
-  setSettings({ ig_page_token: '', ig_user_id: '', ig_username: '', ig_page_name: '', ig_status: '', ig_error: '', ig_synced_at: '' });
+  setSettings({ ig_mode: '', ig_token_expires: '', ig_page_token: '', ig_user_id: '', ig_username: '', ig_page_name: '', ig_status: '', ig_error: '', ig_synced_at: '' });
 }
 
 async function download(url) {
@@ -164,11 +246,14 @@ function sync() {
     const s = getSettings();
     if (!s.ig_page_token || !s.ig_user_id) return { ok: false, skipped: true };
     try {
-      const data = await graph(`${s.ig_user_id}/media`, {
-        fields: 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp',
-        limit: String(KEEP),
-        access_token: s.ig_page_token,
-      });
+      const fieldsList = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
+      let data;
+      if (s.ig_mode === 'instagram') {
+        const token = await refreshIfNeeded(s);
+        data = await request(`${IG_GRAPH}/${VERSION}/me/media`, { fields: fieldsList, limit: String(KEEP), access_token: token });
+      } else {
+        data = await graph(`${s.ig_user_id}/media`, { fields: fieldsList, limit: String(KEEP), access_token: s.ig_page_token });
+      }
       const items = (data.data || []).slice(0, KEEP);
       const existing = new Map(db.prepare('SELECT * FROM ig_auto').all().map((r) => [r.ig_id, r]));
       const keep = new Set();
@@ -235,4 +320,4 @@ function feed(limit = 8) {
 
 const newState = () => crypto.randomBytes(16).toString('hex');
 
-module.exports = { configured, isConnected, loginUrl, connect, disconnect, sync, startScheduler, feed, newState, redirectUri };
+module.exports = { mode: () => (IG_MODE ? 'instagram' : 'facebook'), configured, isConnected, loginUrl, connect, disconnect, sync, startScheduler, feed, newState, redirectUri };

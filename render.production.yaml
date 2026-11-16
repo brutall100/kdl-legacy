@@ -32,6 +32,10 @@ services:
         value: admin
       - key: ADMIN_PASSWORD   # tik pirmam prisijungimui; vėliau keičiamas admin panelėje
         sync: false
+      - key: IG_APP_ID        # Instagram juostai: Instagram app ID („API setup with Instagram login“)
+        sync: false
+      - key: IG_APP_SECRET
+        sync: false
       - key: META_APP_ID      # Instagram juostai (Meta programėlė), nebūtina
         sync: false
       - key: META_APP_SECRET

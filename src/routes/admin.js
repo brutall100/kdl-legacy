@@ -711,6 +711,7 @@ router.get('/instagram', (req, res) => {
   res.render('admin/instagram', {
     active: 'instagram-page',
     configured: instagram.configured(),
+    mode: instagram.mode(),
     connected: instagram.isConnected(),
     redirectUri: instagram.redirectUri(origin(req)),
     autoPosts: db.prepare('SELECT * FROM ig_auto ORDER BY taken_at DESC, id DESC').all(),
