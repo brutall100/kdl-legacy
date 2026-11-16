@@ -285,9 +285,13 @@
       <a class="link-arrow" href="<%= paths.gallery %>"><%= t('gallery.all') %> (<%= galleryCount %>) <%- icon('arrow', 18) %></a>
       <% } %>
     </header>
-    <div class="gallery__grid gallery__grid--home" data-gallery>
+    <div class="gallery__grid gallery__grid--home" data-gallery data-rows="2">
       <% gallery.forEach((g) => { %><%- include('partials/gallery-item', { g }) %><% }) %>
     </div>
+    <p class="gallery__more" data-gallery-more hidden>
+      <button class="btn btn--ghost" type="button" data-more-btn><%= t('gallery.more') %></button>
+      <% if (galleryCount > gallery.length) { %><a class="btn btn--ghost" href="<%= paths.gallery %>" data-more-all hidden><%= t('gallery.all') %> (<%= galleryCount %>)</a><% } %>
+    </p>
   </div>
 </section>
 <% } %>

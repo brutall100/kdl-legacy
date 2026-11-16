@@ -217,6 +217,34 @@
     });
   });
 
+  /* ---------- Galerija pradžioje: 2 eilės + „Rodyti daugiau“ ---------- */
+  $$('[data-rows]').forEach((grid) => {
+    const box = grid.parentElement.querySelector('[data-gallery-more]');
+    const btn = box && $('[data-more-btn]', box);
+    const all = box && $('[data-more-all]', box);
+    const items = Array.from(grid.children);
+    let rows = Number(grid.dataset.rows) || 2;
+    const apply = () => {
+      const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+      const limit = rows * cols;
+      items.forEach((el, i) => {
+        el.hidden = i >= limit;
+      });
+      const more = items.length > limit;
+      if (box) box.hidden = !more && !all;
+      if (btn) btn.hidden = !more;
+      if (all) all.hidden = more;
+    };
+    if (btn) {
+      btn.addEventListener('click', () => {
+        rows += 2;
+        apply();
+      });
+    }
+    window.addEventListener('resize', apply, { passive: true });
+    apply();
+  });
+
   /* ---------- Nuotraukų peržiūra (lightbox) ---------- */
   const lb = $('#lightbox');
   if (lb) {

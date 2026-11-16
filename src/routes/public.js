@@ -176,7 +176,7 @@ function home(lang) {
       testimonials: all('SELECT * FROM testimonials ORDER BY sort, id'),
       news: all('SELECT * FROM news WHERE published = 1 ORDER BY published_at DESC, id DESC LIMIT 3'),
       events: upcomingEvents(4),
-      gallery: await withSizes(all('SELECT * FROM gallery ORDER BY sort, id LIMIT 8')),
+      gallery: await withSizes(all('SELECT * FROM gallery ORDER BY sort, id LIMIT 24')),
       galleryCount: get('SELECT COUNT(*) AS n FROM gallery').n,
       formToken: formToken(),
       sent: req.query.sent === '1',
