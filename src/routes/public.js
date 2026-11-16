@@ -150,6 +150,7 @@ function jsonLd(req, s, S) {
     telephone: s.phone || undefined,
     email: s.email || undefined,
     image: s.logo ? `${root}/uploads/${s.logo}` : `${root}/img/og-image.jpg`,
+    logo: s.logo ? `${root}/uploads/${s.logo}` : `${root}/img/logo-square.png`,
     sameAs: ['facebook', 'instagram', 'tiktok', 'youtube'].map((k) => h.safeUrl(s[k])).filter(Boolean),
   };
   return JSON.stringify(data).replace(/</g, '\\u003c');
