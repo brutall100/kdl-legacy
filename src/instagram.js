@@ -23,7 +23,7 @@ const DIALOG = (process.env.META_DIALOG_URL || 'https://www.facebook.com').repla
 const VERSION = process.env.META_GRAPH_VERSION || 'v21.0';
 const APP_ID = process.env.META_APP_ID || '';
 const APP_SECRET = process.env.META_APP_SECRET || '';
-const SCOPES = ['instagram_basic', 'pages_show_list', 'pages_read_engagement', 'business_management'];
+const SCOPES = ['instagram_basic', 'pages_show_list', 'pages_read_engagement'];
 const KEEP = 12; // kiek įrašų laikome
 const SYNC_EVERY_MS = 60 * 60 * 1000;
 
