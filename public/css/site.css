@@ -975,7 +975,16 @@ main {
   margin-left: -0.6%;
   --kd-glow: drop-shadow(0 0 22px rgba(77, 141, 255, 0.55));
   filter: drop-shadow(0 0 40px rgba(77, 141, 255, 0.18));
-  animation: logoIn 1.1s var(--ease) both;
+  /* backwards (ne both): pasibaigus animacijai opacity valdo .is-sound taisyklė */
+  animation: logoIn 1.1s var(--ease) backwards;
+  transition:
+    opacity 1.8s ease,
+    transform 1.8s var(--ease);
+}
+/* įjungus garsą – logotipas lėtai išnyksta (vieta lieka, tekstas nešokinėja) */
+.hero.is-sound .hero__logo {
+  opacity: 0;
+  transform: scale(0.97);
 }
 .hero__logo--img {
   height: auto;

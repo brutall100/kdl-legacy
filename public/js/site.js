@@ -61,6 +61,9 @@
         heroVideo.play().catch(() => {});
       }
       soundBtn.setAttribute('aria-pressed', String(on));
+      // įjungus garsą logotipas lėtai išnyksta – lieka daugiau vietos vaizdo įrašui
+      const hero = soundBtn.closest('.hero');
+      if (hero) hero.classList.toggle('is-sound', on);
       label.textContent = on ? soundBtn.dataset.on : soundBtn.dataset.off;
       soundBtn.setAttribute('aria-label', label.textContent);
       soundBtn.title = label.textContent;
