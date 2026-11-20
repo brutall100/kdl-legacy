@@ -812,11 +812,9 @@ main {
   inset: 0;
   background: rgba(0, 0, 0, 0.2);
 }
-/* su video – prožektoriai nejuda ir nesimaišo su vaizdu (blur + blend kas kadrą buvo brangu) */
+/* prožektoriai – tik animacijoje be video (ant video nereikalingi ir brangūs: blur + blend kas kadrą) */
 .hero--video .hero__beam {
-  animation: none;
-  mix-blend-mode: normal;
-  opacity: 0.45;
+  display: none;
 }
 /* Nupiešta neoninė gatvė už šokėjų (vietą nustato fx.js) */
 .hero__street-wrap {
