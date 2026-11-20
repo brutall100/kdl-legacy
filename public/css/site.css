@@ -519,9 +519,9 @@ main {
   z-index: 40;
   height: var(--header-h);
   margin-bottom: calc(-1 * var(--header-h));
+  /* backdrop-filter neanimuojam: kol jis „gęsta“, mobilus meniu būtų suspaustas antraštėje */
   transition:
     background-color 0.3s,
-    backdrop-filter 0.3s,
     border-color 0.3s;
   border-bottom: 1px solid transparent;
 }
@@ -764,14 +764,19 @@ main {
   .nav__extra {
     display: block;
   }
-  .nav-open body {
+  /* slinkimą užrakinam ant <html>: užrakinus <body> (su overflow-x: clip) jis tampa
+     atskiru slinkimo konteineriu – „sticky“ antraštė nušoktų į puslapio viršų */
+  html.nav-open {
     overflow: hidden;
   }
   /* backdrop-filter paverčia antraštę „fixed“ meniu konteineriu – tada meniu
-     suspaudžiamas į antraštės aukštį (vidiniuose puslapiuose ir paslinkus) */
+     suspaudžiamas į antraštės aukštį (vidiniuose puslapiuose ir paslinkus).
+     Atidarius meniu antraštė – vientisa, kad meniu nesimatytų „pro“ ją */
   .nav-open .site-header {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+    background: #070b1a;
+    border-bottom-color: var(--line);
   }
 }
 
