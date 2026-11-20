@@ -334,12 +334,6 @@
         <p class="label">Instagram</p>
         <h2 class="h2"><%= t('ig.title') %> <em>Instagram</em></h2>
       </div>
-      <% if (igUrl) { %>
-      <a class="ig-profile" href="<%= igUrl %>" target="_blank" rel="noopener noreferrer">
-        <span class="ig-avatar" aria-hidden="true"><%- icon('instagram', 22) %></span>
-        <span><b>@<%= igHandle %></b><small><%= t('ig.sub') %></small></span>
-      </a>
-      <% } %>
     </header>
     <div class="ig-grid" data-gallery>
       <% igFeed.forEach((p) => { const cap = L(p, 'caption'); %>
