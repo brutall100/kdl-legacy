@@ -760,6 +760,19 @@
     }).observe(heroCanvas);
   }
 
+  // Video pradiniame ekrane uždengia fono ikonas – kol jis užima didžiąją ekrano dalį, jų nepiešiam
+  let videoCovers = false;
+  const heroVideoEl = document.getElementById('hero-video');
+  if (heroVideoEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        videoCovers = e.intersectionRect.height > window.innerHeight * 0.85;
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 0.85, 0.95, 1] }
+    ).observe(heroVideoEl);
+  }
+
   let resizeTimer = 0;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
@@ -783,7 +796,7 @@
     frame++;
     if (!document.hidden) {
       if (dancers && heroVisible) dancers.draw(t, false);
-      if (bg && frame % 2 === 0) bg.draw(t); // ~30 kadrų/s pakanka
+      if (bg && frame % 2 === 0 && !videoCovers) bg.draw(t); // ~30 kadrų/s pakanka
     }
     requestAnimationFrame(loop);
   }

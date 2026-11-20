@@ -19,6 +19,7 @@
   <div class="hero__bg" aria-hidden="true">
     <% if (s.hero_video) { %>
       <video class="hero__video" id="hero-video" src="<%= img(s.hero_video) %>" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="hero__dim"></div>
     <% } %>
     <div class="hero__beam hero__beam--1"></div>
     <div class="hero__beam hero__beam--2"></div>

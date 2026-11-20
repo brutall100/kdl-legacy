@@ -70,6 +70,14 @@
     });
   }
 
+  /* Fono video groja tik kai matomas – slenkant puslapį naršyklei mažiau darbo */
+  if (heroVideo && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) heroVideo.play().catch(() => {});
+      else heroVideo.pause();
+    }).observe(heroVideo);
+  }
+
   /* ---------- Antraštė ---------- */
   const header = $('[data-header]');
   if (header) {
