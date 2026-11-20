@@ -157,7 +157,7 @@ const resources = {
     fields: [
       { name: 'name', label: 'Vardas ir pavardė', type: 'text', required: true },
       { name: 'role', label: 'Pareigos / stiliai', type: 'text', i18n: true, placeholder: 'pvz. Hip-hop trenerė' },
-      { name: 'bio', label: 'Aprašymas', type: 'textarea', i18n: true, rows: 4 },
+      { name: 'bio', label: 'Aprašymas', type: 'textarea', i18n: true, rows: 8, help: 'Tuščia eilutė – nauja pastraipa. Svetainėje rodomos pirmos 4 eilutės ir mygtukas „Skaityti daugiau“.' },
       { name: 'image', label: 'Nuotrauka', type: 'image' },
       { name: 'instagram', label: 'Instagram nuoroda', type: 'url' },
     ],

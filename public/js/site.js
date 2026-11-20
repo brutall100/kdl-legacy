@@ -217,6 +217,29 @@
     });
   });
 
+  /* ---------- Trenerių aprašymai: 4 eilutės + „Skaityti daugiau“ ---------- */
+  $$('[data-clamp]').forEach((bio) => {
+    const btn = bio.parentElement.querySelector(`[data-clamp-btn][aria-controls="${bio.id}"]`);
+    if (!btn) return;
+    let open = false;
+    const check = () => {
+      if (open) return;
+      bio.classList.add('is-clamped');
+      const long = bio.scrollHeight > bio.clientHeight + 4;
+      bio.classList.toggle('is-clamped', long);
+      btn.hidden = !long;
+    };
+    btn.addEventListener('click', () => {
+      open = !open;
+      bio.classList.toggle('is-clamped', !open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? btn.dataset.less : btn.dataset.more;
+      if (!open) bio.closest('.trainer').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+    window.addEventListener('resize', check, { passive: true });
+    check();
+  });
+
   /* ---------- Galerija pradžioje: 2 eilės + „Rodyti daugiau“ ---------- */
   $$('[data-rows]').forEach((grid) => {
     const box = grid.parentElement.querySelector('[data-gallery-more]');
