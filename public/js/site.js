@@ -231,10 +231,28 @@
     };
     btn.addEventListener('click', () => {
       open = !open;
-      bio.classList.toggle('is-clamped', !open);
       btn.setAttribute('aria-expanded', String(open));
       btn.textContent = open ? btn.dataset.less : btn.dataset.more;
-      if (!open) bio.closest('.trainer').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      if (open) {
+        // sklandžiai išskleidžiam iki pilno aukščio
+        const from = bio.clientHeight;
+        bio.classList.remove('is-clamped');
+        const to = bio.scrollHeight;
+        bio.style.maxHeight = `${from}px`;
+        void bio.offsetHeight;
+        bio.style.maxHeight = `${to}px`;
+        bio.addEventListener('transitionend', () => {
+          if (open) bio.style.maxHeight = '';
+        }, { once: true });
+      } else {
+        // atgal į 4 eilutes
+        bio.style.maxHeight = `${bio.scrollHeight}px`;
+        void bio.offsetHeight;
+        bio.classList.add('is-clamped');
+        bio.style.maxHeight = '';
+        const card = bio.closest('.trainer');
+        if (card.getBoundingClientRect().top < 0) card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
     });
     window.addEventListener('resize', check, { passive: true });
     check();

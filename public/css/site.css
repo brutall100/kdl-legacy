@@ -1619,6 +1619,15 @@ main {
 .trainer__bio p + p {
   margin-top: 0.75em;
 }
+.trainer__bio[data-clamp] {
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .trainer__bio[data-clamp] {
+    transition: none;
+  }
+}
 /* ilgas aprašymas: 4 eilutės + „Skaityti daugiau“ */
 .trainer__bio.is-clamped {
   max-height: calc(1.65em * 4);
