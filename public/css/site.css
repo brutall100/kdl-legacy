@@ -715,13 +715,16 @@ main {
     opacity: 0;
     visibility: hidden;
     transition:
-      opacity 0.3s,
-      visibility 0.3s;
+      opacity 0.2s,
+      visibility 0.2s;
     overflow-y: auto;
   }
+  /* atidarant fonas atsiranda iš karto (be permatomo tarpinio kadro, kai „persišviečia“
+     puslapio tekstas); juda tik meniu punktai. Uždarant – trumpas išblukimas */
   .nav-open .nav {
     opacity: 1;
     visibility: visible;
+    transition: none;
   }
   .nav__list {
     flex-direction: column;
@@ -773,6 +776,7 @@ main {
      suspaudžiamas į antraštės aukštį (vidiniuose puslapiuose ir paslinkus).
      Atidarius meniu antraštė – vientisa, kad meniu nesimatytų „pro“ ją */
   .nav-open .site-header {
+    transition: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     background: #070b1a;
