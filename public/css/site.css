@@ -711,7 +711,7 @@ main {
     padding: calc(var(--header-h) + 1.5rem) var(--gutter) 2.5rem;
     background:
       radial-gradient(120% 70% at 100% 0%, rgba(77, 141, 255, 0.22), transparent 60%),
-      rgba(7, 11, 26, 0.985);
+      #070b1a;
     opacity: 0;
     visibility: hidden;
     transition:
@@ -766,6 +766,12 @@ main {
   }
   .nav-open body {
     overflow: hidden;
+  }
+  /* backdrop-filter paverčia antraštę „fixed“ meniu konteineriu – tada meniu
+     suspaudžiamas į antraštės aukštį (vidiniuose puslapiuose ir paslinkus) */
+  .nav-open .site-header {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
