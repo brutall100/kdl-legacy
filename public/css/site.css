@@ -983,6 +983,16 @@ main {
   width: auto;
   max-width: min(100%, 800px);
 }
+/* kompiuteryje – mažesnis, kad neuždengtų fono vaizdo įrašo (telefone – kaip buvo) */
+@media (min-width: 900px) {
+  .hero__logo {
+    width: min(100%, clamp(300px, 30vw, 460px));
+  }
+  .hero__logo--img {
+    max-width: min(100%, 460px);
+    max-height: 30vh;
+  }
+}
 @keyframes logoIn {
   from {
     opacity: 0;
